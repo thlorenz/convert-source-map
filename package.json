@@ -1,26 +1,28 @@
 {
-    "name" : "convert-source-map",
-    "version" : "0.0.0",
-    "description" : "Converts a source-map from/to different formats.",
-    "main" : "convert-source-map.js",
-    "scripts" : {
-        "test" : "node-trap test/*.js"
-    },
-    "repository" : {
-        "type" : "git",
-        "url" : "git://github.com/thlorenz/convert-source-map.git"
-    },
-    "homepage" : "https://github.com/thlorenz/convert-source-map",
-    "dependencies" : {
-    },
-    "devDependencies" : {
-    },
-    "keywords": [] ,
-    "author" : {
-        "name" : "Thorsten Lorenz",
-        "email" : "thlorenz@gmx.de",
-        "url" : "http://thlorenz.com"
-    },
-    "license" : "MIT",
-    "engine" : { "node" : ">=0.6" }
+  "name": "convert-source-map",
+  "version": "0.0.0",
+  "description": "Converts a source-map from/to different formats.",
+  "main": "convert-source-map.js",
+  "scripts": {
+    "test": "node-trap test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/thlorenz/convert-source-map.git"
+  },
+  "homepage": "https://github.com/thlorenz/convert-source-map",
+  "dependencies": {},
+  "devDependencies": {
+    "trap": "~0.4.2"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Thorsten Lorenz",
+    "email": "thlorenz@gmx.de",
+    "url": "http://thlorenz.com"
+  },
+  "license": "MIT",
+  "engine": {
+    "node": ">=0.6"
+  }
 }
