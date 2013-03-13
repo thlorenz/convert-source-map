@@ -59,6 +59,7 @@ exports.fromComment = function (comment) {
 };
 
 exports.fromFileContent = function (content) {
+  // TODO: handle harder cases (lines.pop isn't gonna cut it)
   var lines = content.split('\n');
   var comment = lines.pop();
   return exports.fromComment(comment);
