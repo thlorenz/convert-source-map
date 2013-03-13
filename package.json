@@ -13,7 +13,8 @@
   "homepage": "https://github.com/thlorenz/convert-source-map",
   "dependencies": {},
   "devDependencies": {
-    "trap": "~0.4.2"
+    "trap": "~0.4.2",
+    "inline-source-map": "~0.2.1"
   },
   "keywords": [],
   "author": {
