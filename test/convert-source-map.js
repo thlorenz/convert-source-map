@@ -26,6 +26,25 @@ test('different formats', function (t) {
   t.equal(convert.fromJSON(json).toJSON(), json, 'json -> json')
   t.equal(convert.fromJSON(json).toBase64(), base64, 'json -> base64')
   t.equal(convert.fromJSON(json).toComment(), comment, 'json -> comment')
+
+})
+
+
+test('from source', function (t) {
+  var foo = '' + function foo() {
+        console.log('hello I am foo');
+        console.log('who are you');
+      }
+    + '\nfoo();\n'
+  var map = '//@ sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZm9vLmpzIiwic291cmNlcyI6WyJmdW5jdGlvbiBmb28oKSB7XG4gICAgY29uc29sZS5sb2coJ2hlbGxvIEkgYW0gZm9vJyk7XG4gICAgY29uc29sZS5sb2coJ3dobyBhcmUgeW91Jyk7XG4gIH0iXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUEifQ=='
+
+  function getComment(src) {
+    return convert
+      .fromFileContent(src)
+      .toComment();
+  }
+  
+  t.equal(getComment(foo + map), map, 'beginning of last line')
 })
 
 test('adding properties', function (t) {

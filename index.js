@@ -59,5 +59,7 @@ exports.fromComment = function (comment) {
 };
 
 exports.fromFileContent = function (content) {
-  throw new Error('not implemented, will parse content to find the comment and the call fromComment');
+  var lines = content.split('\n');
+  var comment = lines.pop();
+  return exports.fromComment(comment);
 };
