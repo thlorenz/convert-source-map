@@ -34,7 +34,7 @@ Converter.prototype.toComment = function () {
 
 Converter.prototype.addProperty = function (key, value) {
   if (this.sourcemap.hasOwnProperty(key)) throw new Error('property %s already exists on the sourcemap, use set property instead');
-  this.setProperty(key, value);
+  return this.setProperty(key, value);
 };
 
 Converter.prototype.setProperty = function (key, value) {
