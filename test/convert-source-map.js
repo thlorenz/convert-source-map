@@ -12,23 +12,33 @@ var gen = generator()
 , base64 = gen.base64Encode()
 , comment = gen.inlineMappingUrl()
 , json = '{"version":3,"file":"","sources":["foo.js","bar.js"],"names":[],"mappings":";;;;;;;;;UACG;;;;;;;;;;;;;;sBCDH;sBACA"}'
+, obj = JSON.parse(json)
 
 test('different formats', function (t) {
 
   t.equal(convert.fromComment(comment).toComment(), comment, 'comment -> comment')
   t.equal(convert.fromComment(comment).toBase64(), base64, 'comment -> base64')
   t.equal(convert.fromComment(comment).toJSON(), json, 'comment -> json')
+  t.deepEqual(convert.fromComment(comment).toObject(), obj, 'comment -> object')
 
   t.equal(convert.fromBase64(base64).toBase64(), base64, 'base64 -> base64')
   t.equal(convert.fromBase64(base64).toComment(), comment, 'base64 -> comment')
   t.equal(convert.fromBase64(base64).toJSON(), json, 'base64 -> json')
+  t.deepEqual(convert.fromBase64(base64).toObject(), obj, 'base64 -> object')
   
   t.equal(convert.fromJSON(json).toJSON(), json, 'json -> json')
   t.equal(convert.fromJSON(json).toBase64(), base64, 'json -> base64')
   t.equal(convert.fromJSON(json).toComment(), comment, 'json -> comment')
+  t.deepEqual(convert.fromJSON(json).toObject(), obj, 'json -> object')
 
 })
 
+test('to object returns a copy', function (t) {
+  var c = convert.fromJSON(json)
+  var o = c.toObject()
+  o.version = '99';
+  t.equal(c.toObject().version, '3', 'setting property on returned object does not affect original')
+})
 
 test('from source', function (t) {
   var foo = [

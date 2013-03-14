@@ -46,6 +46,10 @@ Returns source map converter from given base64 encoded json string prefixed with
 Finds last sourcemap comment in file and returns source map converter or returns null if no source map comment was
 found.
 
+### toObject()
+
+Returns a copy of the underlying source map.
+
 ### toJSON()
 
 Converts source map to json string.

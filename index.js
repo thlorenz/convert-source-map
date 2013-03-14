@@ -36,6 +36,11 @@ Converter.prototype.toComment = function () {
   return '//@ sourceMappingURL=data:application/json;base64,' + base64;
 };
 
+// returns copy instead of original
+Converter.prototype.toObject = function () {
+  return JSON.parse(this.toJSON());
+};
+
 Converter.prototype.addProperty = function (key, value) {
   if (this.sourcemap.hasOwnProperty(key)) throw new Error('property %s already exists on the sourcemap, use set property instead');
   return this.setProperty(key, value);
