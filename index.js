@@ -1,4 +1,5 @@
 'use strict';
+var commentRx = /^\W*\/\/@\W+sourceMappingURL=data:(?:application|text)\/json;base64,(.+)/mg;
 
 function decodeBase64(base64) {
   return new Buffer(base64, 'base64').toString();
@@ -10,12 +11,15 @@ function stripComment(sm) {
 
 function Converter (sourcemap, isEncoded, isJSON, hasComment) {
   var sm = sourcemap;
+  try {
+    if (hasComment) sm = stripComment(sm);
+    if (isEncoded) sm = decodeBase64(sm);
+    if (isJSON || isEncoded) sm = JSON.parse(sm);
 
-  if (hasComment) sm = stripComment(sm);
-  if (isEncoded) sm = decodeBase64(sm);
-  if (isJSON || isEncoded) sm = JSON.parse(sm);
-
-  this.sourcemap = sm;
+    this.sourcemap = sm;
+  } catch(e) {
+    return null;
+  }
 }
 
 Converter.prototype.toJSON = function () {
@@ -58,9 +62,12 @@ exports.fromComment = function (comment) {
   return new Converter(comment, true, false, true);
 };
 
-exports.fromFileContent = function (content) {
-  // TODO: handle harder cases (lines.pop isn't gonna cut it)
-  var lines = content.split('\n');
-  var comment = lines.pop();
-  return exports.fromComment(comment);
+// Finds last sourcemap comment in file or returns null if none was found
+exports.fromSource = function (content) {
+  var m = content.match(commentRx);
+  return m ? exports.fromComment(m.pop()) : null;
+};
+
+exports.removeComments = function (src) {
+  return src.replace(commentRx, '');
 };
