@@ -1,5 +1,5 @@
 'use strict';
-var commentRx = /^\W*\/\/@\W+sourceMappingURL=data:(?:application|text)\/json;base64,(.+)/mg;
+var commentRx = /^[ \t]*\/\/@[ \t]+sourceMappingURL=data:(?:application|text)\/json;base64,(.+)/mg;
 
 function decodeBase64(base64) {
   return new Buffer(base64, 'base64').toString();
@@ -70,11 +70,16 @@ exports.fromComment = function (comment) {
 // Finds last sourcemap comment in file or returns null if none was found
 exports.fromSource = function (content) {
   var m = content.match(commentRx);
+  commentRx.lastIndex = 0;
   return m ? exports.fromComment(m.pop()) : null;
 };
 
 exports.removeComments = function (src) {
+  commentRx.lastIndex = 0;
   return src.replace(commentRx, '');
 };
 
-exports.__defineGetter__('commentRegex', function () { return commentRx; });
+exports.__defineGetter__('commentRegex', function () {
+  commentRx.lastIndex = 0;
+  return commentRx; 
+});
