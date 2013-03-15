@@ -76,3 +76,5 @@ exports.fromSource = function (content) {
 exports.removeComments = function (src) {
   return src.replace(commentRx, '');
 };
+
+exports.__defineGetter__('commentRegex', function () { return commentRx; });

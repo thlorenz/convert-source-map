@@ -73,3 +73,7 @@ Sets given property to the source map. If property doesn't exist it is added, ot
 ### removeComments(src)
 
 Returns `src` with all source map comments removed
+
+### commentRegex
+
+Returns the regex used to find source map comments.
