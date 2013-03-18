@@ -60,7 +60,7 @@ Converts source map to base64 encoded json string.
 
 ### toComment()
 
-Converts source map to base64 encoded json string prefixed with `//@ sourceMappintURL=...`.
+Converts source map to base64 encoded json string prefixed with `//@ sourceMappingURL=...`.
 
 ### addProperty(key, value)
 
@@ -69,6 +69,10 @@ Adds given property to the source map. Throws an error if property already exist
 ### setProperty(key, value)
 
 Sets given property to the source map. If property doesn't exist it is added, otherwise its value is updated.
+
+### getProperty(key)
+
+Gets given property of the source map.
 
 ### removeComments(src)
 

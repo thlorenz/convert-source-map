@@ -51,6 +51,10 @@ Converter.prototype.setProperty = function (key, value) {
   return this;
 };
 
+Converter.prototype.getProperty = function (key) {
+  return this.sourcemap[key];
+};
+
 exports.fromObject = function (obj) {
   return new Converter(obj, false, false, false);
 };

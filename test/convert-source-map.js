@@ -112,3 +112,10 @@ test('setting properties', function (t) {
     , 'includes new property and changes existing properties'
   )
 })
+
+test('getting properties', function (t) {
+  var sm = convert.fromJSON(json)
+
+  t.equal(sm.getProperty('version'), 3, 'gets version')
+  t.deepEqual(sm.getProperty('sources'), ['foo.js', 'bar.js'], 'gets sources')
+})
