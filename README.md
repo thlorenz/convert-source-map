@@ -50,9 +50,11 @@ found.
 
 Returns a copy of the underlying source map.
 
-### toJSON()
+### toJSON([space])
 
-Converts source map to json string.
+Converts source map to json string. If `space` is given (optional), this will be passed to
+[JSON.stringify](https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/JSON/stringify) when the
+JSON string is generated.
 
 ### toBase64()
 

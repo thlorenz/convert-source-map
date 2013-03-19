@@ -85,6 +85,14 @@ test('remove comments', function (t) {
   t.equal(convert.removeComments(foo + otherMap + extraCode + map + map), foo + extraCode, 'multiple comments from the middle of code')
 })
 
+test('pretty json', function (t) {
+  var mod = convert.fromJSON(json).toJSON(2);
+  t.equal(
+      mod
+    , '{\n  "version": 3,\n  "file": "",\n  "sources": [\n    "foo.js",\n    "bar.js"\n  ],\n  "names": [],\n  "mappings": ";;;;;;;;;UACG;;;;;;;;;;;;;;sBCDH;sBACA"\n}'
+    , 'pretty prints json whe space is given')
+})
+
 test('adding properties', function (t) {
   var mod = convert
     .fromJSON(json)

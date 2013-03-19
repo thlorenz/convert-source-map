@@ -22,8 +22,8 @@ function Converter (sourcemap, isEncoded, isJSON, hasComment) {
   }
 }
 
-Converter.prototype.toJSON = function () {
-  return JSON.stringify(this.sourcemap);
+Converter.prototype.toJSON = function (space) {
+  return JSON.stringify(this.sourcemap, null, space);
 };
 
 Converter.prototype.toBase64 = function () {
