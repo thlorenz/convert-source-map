@@ -4,7 +4,7 @@
   "description": "Converts a source-map from/to  different formats and allows adding/changing properties.",
   "main": "index.js",
   "scripts": {
-    "test": "node-trap test/*.js"
+    "test": "tap test/*.js"
   },
   "repository": {
     "type": "git",
@@ -13,8 +13,8 @@
   "homepage": "https://github.com/thlorenz/convert-source-map",
   "dependencies": {},
   "devDependencies": {
-    "trap": "~0.4.2",
-    "inline-source-map": "~0.2.1"
+    "inline-source-map": "~0.2.1",
+    "tap": "~0.4.3"
   },
   "keywords": [],
   "author": {
