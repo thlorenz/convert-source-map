@@ -55,7 +55,7 @@ Converter.prototype.toBase64 = function () {
 
 Converter.prototype.toComment = function () {
   var base64 = this.toBase64();
-  return '//@ sourceMappingURL=data:application/json;base64,' + base64;
+  return '//# sourceMappingURL=data:application/json;base64,' + base64;
 };
 
 // returns copy instead of original

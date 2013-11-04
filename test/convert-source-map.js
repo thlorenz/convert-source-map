@@ -6,12 +6,13 @@ var test = require('tap').test
   , convert = require('..')
 
 var gen = generator()
-  .addMappings('foo.js', [{ original: { line: 2, column: 3 } , generated: { line: 5, column: 10 } }], { line: 5 })
-  .addGeneratedMappings('bar.js', 'var a = 2;\nconsole.log(a)', { line: 23, column: 22 })
-, base64 = gen.base64Encode()
-, comment = gen.inlineMappingUrl()
-, json = '{"version":3,"file":"","sources":["foo.js","bar.js"],"names":[],"mappings":";;;;;;;;;UACG;;;;;;;;;;;;;;sBCDH;sBACA"}'
-, obj = JSON.parse(json)
+    .addMappings('foo.js', [{ original: { line: 2, column: 3 } , generated: { line: 5, column: 10 } }], { line: 5 })
+    .addGeneratedMappings('bar.js', 'var a = 2;\nconsole.log(a)', { line: 23, column: 22 })
+
+  , base64 = gen.base64Encode()
+  , comment = gen.inlineMappingUrl()
+  , json = '{"version":3,"file":"","sources":["foo.js","bar.js"],"names":[],"mappings":";;;;;;;;;UACG;;;;;;;;;;;;;;sBCDH;sBACA"}'
+  , obj = JSON.parse(json)
 
 test('different formats', function (t) {
 
