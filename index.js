@@ -1,5 +1,9 @@
 'use strict';
-var commentRx = /^[ \t]*\/\/@[ \t]+sourceMappingURL=data:(?:application|text)\/json;base64,(.+)/mg;
+var fs = require('fs');
+var path = require('path');
+
+var commentRx = /^[ \t]*\/\/(@|#)[ \t]+sourceMappingURL=data:(?:application|text)\/json;base64,(.+)/mg;
+var commentMapFileRx = /^(\/\/|\/\*)(@|#)[ \t]+sourceMappingURL=(.+?) *(\*\/)/mg;
 
 function decodeBase64(base64) {
   return new Buffer(base64, 'base64').toString();
@@ -9,15 +13,33 @@ function stripComment(sm) {
   return sm.split(',').pop();
 }
 
-function Converter (sourcemap, isEncoded, isJSON, hasComment) {
-  var sm = sourcemap;
+function readFromFileMap(sm, dir) {
+  // NOTE: this will only work on the server since it attempts to read the map file
+
+  var r = commentMapFileRx.exec(sm);
+  commentMapFileRx.lastIndex = 0;
+  
+  var filename = r[3];
+  var filepath = path.join(dir, filename);
+
   try {
-    if (hasComment) sm = stripComment(sm);
-    if (isEncoded) sm = decodeBase64(sm);
-    if (isJSON || isEncoded) sm = JSON.parse(sm);
+    return fs.readFileSync(filepath, 'utf8');
+  } catch (e) {
+    throw new Error('An error occurred while trying to read the map file at ' + filepath + '\n' + e);
+  }
+}
+
+function Converter (sm, opts) {
+  opts = opts || {};
+  try {
+    if (opts.isFileComment) sm = readFromFileMap(sm, opts.commentFileDir);
+    if (opts.hasComment) sm = stripComment(sm);
+    if (opts.isEncoded) sm = decodeBase64(sm);
+    if (opts.isJSON || opts.isEncoded) sm = JSON.parse(sm);
 
     this.sourcemap = sm;
   } catch(e) {
+    console.error(e);
     return null;
   }
 }
@@ -56,19 +78,23 @@ Converter.prototype.getProperty = function (key) {
 };
 
 exports.fromObject = function (obj) {
-  return new Converter(obj, false, false, false);
+  return new Converter(obj);
 };
 
 exports.fromJSON = function (json) {
-  return new Converter(json, false, true, false);
+  return new Converter(json, { isJSON: true });
 };
 
 exports.fromBase64 = function (base64) {
-  return new Converter(base64, true, false, false);
+  return new Converter(base64, { isEncoded: true });
 };
 
 exports.fromComment = function (comment) {
-  return new Converter(comment, true, false, true);
+  return new Converter(comment, { isEncoded: true, hasComment: true });
+};
+
+exports.fromMapFileComment = function (comment, dir) {
+  return new Converter(comment, { commentFileDir: dir, isFileComment: true, isJSON: true });
 };
 
 // Finds last sourcemap comment in file or returns null if none was found
@@ -76,6 +102,13 @@ exports.fromSource = function (content) {
   var m = content.match(commentRx);
   commentRx.lastIndex = 0;
   return m ? exports.fromComment(m.pop()) : null;
+};
+
+// Finds last sourcemap comment in file or returns null if none was found
+exports.fromMapFileSource = function (content, dir) {
+  var m = content.match(commentMapFileRx);
+  commentMapFileRx.lastIndex = 0;
+  return m ? exports.fromMapFileComment(m.pop(), dir) : null;
 };
 
 exports.removeComments = function (src) {
@@ -86,4 +119,9 @@ exports.removeComments = function (src) {
 exports.__defineGetter__('commentRegex', function () {
   commentRx.lastIndex = 0;
   return commentRx; 
+});
+
+exports.__defineGetter__('commentMapFileRegex', function () {
+  commentMapFileRx.lastIndex = 0;
+  return commentMapFileRx; 
 });
