@@ -12,10 +12,9 @@
   },
   "homepage": "https://github.com/thlorenz/convert-source-map",
   "dependencies": {
-    "inline-source-map": "~0.3.0"
   },
   "devDependencies": {
-    "inline-source-map": "~0.2.1",
+    "inline-source-map": "~0.3.0",
     "tap": "~0.4.3"
   },
   "keywords": [],
