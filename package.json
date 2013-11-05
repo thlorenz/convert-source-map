@@ -11,7 +11,9 @@
     "url": "git://github.com/thlorenz/convert-source-map.git"
   },
   "homepage": "https://github.com/thlorenz/convert-source-map",
-  "dependencies": {},
+  "dependencies": {
+    "inline-source-map": "~0.3.0"
+  },
   "devDependencies": {
     "inline-source-map": "~0.2.1",
     "tap": "~0.4.3"
