@@ -4,8 +4,8 @@ var path = require('path');
 
 var commentRx = /^[ \t]*\/\/[@#][ \t]+sourceMappingURL=data:(?:application|text)\/json;base64,(.+)/mg;
 var mapFileCommentRx = 
-  // //# sourceMappingURL=foo.js.map                   /*# sourceMappingURL=foo.js.map */
-  /^[ \t]*\/\/[@|#][ \t]+sourceMappingURL=(.+?)[ \t]*|[ \t]*\/\*[@#][ \t]+sourceMappingURL=(.+?)[ \t]*\*\/[ \t]*$/mg;
+  // //# sourceMappingURL=foo.js.map                       /*# sourceMappingURL=foo.js.map */
+  /(?:^[ \t]*\/\/[@|#][ \t]+sourceMappingURL=(.+?)[ \t]*$)|(?:^[ \t]*\/\*[@#][ \t]+sourceMappingURL=(.+?)[ \t]*\*\/[ \t]*$)/mg
 
 function decodeBase64(base64) {
   return new Buffer(base64, 'base64').toString();
@@ -21,7 +21,8 @@ function readFromFileMap(sm, dir) {
   var r = mapFileCommentRx.exec(sm);
   mapFileCommentRx.lastIndex = 0;
   
-  var filename = r[2];
+  // for some odd reason //# .. captures in 1 and /* .. */ in 2
+  var filename = r[1] || r[2];
   var filepath = path.join(dir, filename);
 
   try {
@@ -116,6 +117,11 @@ exports.fromMapFileSource = function (content, dir) {
 exports.removeComments = function (src) {
   commentRx.lastIndex = 0;
   return src.replace(commentRx, '');
+};
+
+exports.removeMapFileComments = function (src) {
+  mapFileCommentRx.lastIndex = 0;
+  return src.replace(mapFileCommentRx, '');
 };
 
 exports.__defineGetter__('commentRegex', function () {

@@ -95,6 +95,14 @@ Gets given property of the source map.
 
 Returns `src` with all source map comments removed
 
+### removeMapFileComments(src)
+
+Returns `src` with all source map comments pointing to map files removed.
+
 ### commentRegex
 
 Returns the regex used to find source map comments.
+
+### mapFileCommentRegex
+
+Returns the regex used to find source map comments pointing to map files.
