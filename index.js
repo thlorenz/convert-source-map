@@ -2,8 +2,10 @@
 var fs = require('fs');
 var path = require('path');
 
-var commentRx = /^[ \t]*\/\/(@|#)[ \t]+sourceMappingURL=data:(?:application|text)\/json;base64,(.+)/mg;
-var commentMapFileRx = /^(\/\/|\/\*)(@|#)[ \t]+sourceMappingURL=(.+?) *(\*\/)/mg;
+var commentRx = /^[ \t]*\/\/[@#][ \t]+sourceMappingURL=data:(?:application|text)\/json;base64,(.+)/mg;
+var mapFileCommentRx = 
+  // //# sourceMappingURL=foo.js.map                   /*# sourceMappingURL=foo.js.map */
+  /^[ \t]*\/\/[@|#][ \t]+sourceMappingURL=(.+?)[ \t]*|[ \t]*\/\*[@#][ \t]+sourceMappingURL=(.+?)[ \t]*\*\/[ \t]*$/mg;
 
 function decodeBase64(base64) {
   return new Buffer(base64, 'base64').toString();
@@ -16,10 +18,10 @@ function stripComment(sm) {
 function readFromFileMap(sm, dir) {
   // NOTE: this will only work on the server since it attempts to read the map file
 
-  var r = commentMapFileRx.exec(sm);
-  commentMapFileRx.lastIndex = 0;
+  var r = mapFileCommentRx.exec(sm);
+  mapFileCommentRx.lastIndex = 0;
   
-  var filename = r[3];
+  var filename = r[2];
   var filepath = path.join(dir, filename);
 
   try {
@@ -106,8 +108,8 @@ exports.fromSource = function (content) {
 
 // Finds last sourcemap comment in file or returns null if none was found
 exports.fromMapFileSource = function (content, dir) {
-  var m = content.match(commentMapFileRx);
-  commentMapFileRx.lastIndex = 0;
+  var m = content.match(mapFileCommentRx);
+  mapFileCommentRx.lastIndex = 0;
   return m ? exports.fromMapFileComment(m.pop(), dir) : null;
 };
 
@@ -121,7 +123,7 @@ exports.__defineGetter__('commentRegex', function () {
   return commentRx; 
 });
 
-exports.__defineGetter__('commentMapFileRegex', function () {
-  commentMapFileRx.lastIndex = 0;
-  return commentMapFileRx; 
+exports.__defineGetter__('mapFileCommentRegex', function () {
+  mapFileCommentRx.lastIndex = 0;
+  return mapFileCommentRx; 
 });
