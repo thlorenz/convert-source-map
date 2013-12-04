@@ -106,3 +106,7 @@ Returns the regex used to find source map comments.
 ### mapFileCommentRegex
 
 Returns the regex used to find source map comments pointing to map files.
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/thlorenz/convert-source-map/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
