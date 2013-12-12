@@ -1,6 +1,6 @@
 {
   "name": "convert-source-map",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Converts a source-map from/to  different formats and allows adding/changing properties.",
   "main": "index.js",
   "scripts": {
@@ -16,7 +16,14 @@
     "inline-source-map": "~0.3.0",
     "tap": "~0.4.3"
   },
-  "keywords": [ "convert", "sourcemap", "source", "map", "browser", "debug" ],
+  "keywords": [
+    "convert",
+    "sourcemap",
+    "source",
+    "map",
+    "browser",
+    "debug"
+  ],
   "author": {
     "name": "Thorsten Lorenz",
     "email": "thlorenz@gmx.de",
