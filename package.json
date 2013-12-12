@@ -16,7 +16,7 @@
     "inline-source-map": "~0.3.0",
     "tap": "~0.4.3"
   },
-  "keywords": [],
+  "keywords": [ "convert", "sourcemap", "source", "map", "browser", "debug" ],
   "author": {
     "name": "Thorsten Lorenz",
     "email": "thlorenz@gmx.de",
