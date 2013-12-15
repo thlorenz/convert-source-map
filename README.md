@@ -1,5 +1,7 @@
 # convert-source-map [![build status](https://secure.travis-ci.org/thlorenz/convert-source-map.png)](http://travis-ci.org/thlorenz/convert-source-map)
 
+[![NPM](https://nodei.co/npm/convert-source-map.png?downloads=true&stars=true)](https://nodei.co/npm/convert-source-map/)
+
 Converts a source-map from/to  different formats and allows adding/changing properties.
 
 ```js
