@@ -5,7 +5,7 @@ var path = require('path');
 var commentRx = /(?:\/\/|\/\*)[@#][ \t]+sourceMappingURL=data:(?:application|text)\/json;base64,((?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?)(?:[ \t]*\*\/)?$/mg;
 var mapFileCommentRx =
   // //# sourceMappingURL=foo.js.map                       /*# sourceMappingURL=foo.js.map */
-  /(?:\/\/[@|#][ \t]+sourceMappingURL=(.+?)[ \t]*$)|(?:\/\*[@#][ \t]+sourceMappingURL=([^\*]+?)[ \t]*(?:\*\/){1}[ \t]*$)/mg
+  /(?:\/\/[@#][ \t]+sourceMappingURL=(.+?)[ \t]*$)|(?:\/\*[@#][ \t]+sourceMappingURL=([^\*]+?)[ \t]*(?:\*\/){1}[ \t]*$)/mg
 
 function decodeBase64(base64) {
   return new Buffer(base64, 'base64').toString();
