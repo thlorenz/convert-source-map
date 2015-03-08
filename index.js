@@ -42,7 +42,6 @@ function Converter (sm, opts) {
 
     this.sourcemap = sm;
   } catch(e) {
-    console.error(e);
     return null;
   }
 }
