@@ -20,7 +20,7 @@ function readFromFileMap(sm, dir) {
 
   var r = mapFileCommentRx.exec(sm);
   mapFileCommentRx.lastIndex = 0;
-  
+
   // for some odd reason //# .. captures in 1 and /* .. */ in 2
   var filename = r[1] || r[2];
   var filepath = path.join(dir, filename);
@@ -50,7 +50,7 @@ function Converter (sm, opts) {
 function convertFromLargeSource(content){
   var lines = content.split('\n');
   var line;
-  // find first line which contains a source map starting at end of content 
+  // find first line which contains a source map starting at end of content
   for (var i = lines.length - 1; i > 0; i--) {
     line = lines[i]
     if (~line.indexOf('sourceMappingURL=data:')) return exports.fromComment(line);
@@ -66,9 +66,10 @@ Converter.prototype.toBase64 = function () {
   return new Buffer(json).toString('base64');
 };
 
-Converter.prototype.toComment = function () {
+Converter.prototype.toComment = function (multiLine) {
   var base64 = this.toBase64();
-  return '//# sourceMappingURL=data:application/json;base64,' + base64;
+  var data = 'sourceMappingURL=data:application/json;base64,' + base64;
+  return multiLine ? '/*# ' + data + ' */' : '//# ' + data;
 };
 
 // returns copy instead of original
@@ -142,10 +143,10 @@ exports.removeMapFileComments = function (src) {
 
 exports.__defineGetter__('commentRegex', function () {
   commentRx.lastIndex = 0;
-  return commentRx; 
+  return commentRx;
 });
 
 exports.__defineGetter__('mapFileCommentRegex', function () {
   mapFileCommentRx.lastIndex = 0;
-  return mapFileCommentRx; 
+  return mapFileCommentRx;
 });
