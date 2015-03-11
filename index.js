@@ -34,17 +34,13 @@ function readFromFileMap(sm, dir) {
 
 function Converter (sm, opts) {
   opts = opts || {};
-  try {
-    if (opts.isFileComment) sm = readFromFileMap(sm, opts.commentFileDir);
-    if (opts.hasComment) sm = stripComment(sm);
-    if (opts.isEncoded) sm = decodeBase64(sm);
-    if (opts.isJSON || opts.isEncoded) sm = JSON.parse(sm);
 
-    this.sourcemap = sm;
-  } catch(e) {
-    console.error(e);
-    return null;
-  }
+  if (opts.isFileComment) sm = readFromFileMap(sm, opts.commentFileDir);
+  if (opts.hasComment) sm = stripComment(sm);
+  if (opts.isEncoded) sm = decodeBase64(sm);
+  if (opts.isJSON || opts.isEncoded) sm = JSON.parse(sm);
+
+  this.sourcemap = sm;
 }
 
 function convertFromLargeSource(content){
