@@ -66,9 +66,10 @@ Converter.prototype.toBase64 = function () {
   return new Buffer(json).toString('base64');
 };
 
-Converter.prototype.toComment = function () {
+Converter.prototype.toComment = function (options) {
   var base64 = this.toBase64();
-  return '//# sourceMappingURL=data:application/json;base64,' + base64;
+  var data = 'sourceMappingURL=data:application/json;base64,' + base64;
+  return options && options.multiline ? '/*# ' + data + ' */' : '//# ' + data;
 };
 
 // returns copy instead of original
