@@ -47,14 +47,20 @@ function Converter (sm, opts) {
   }
 }
 
-function findLastSourceMapComment(comment, line){
-  if (line.indexOf('sourceMappingURL=data:') > -1) comment = line;
-  return comment;
-};
-
 function convertFromLargeSource(content){
-  var comment = content.split('\n').reduce(findLastSourceMapComment, '')
-  return comment ? exports.fromComment(comment) : null;
+  var lines = content.split('\n');
+  var lineNumber;
+  var line;
+
+  // starting with the last line, look for the source map comment
+  for (lineNumber = lines.length - 1; lineNumber > 0; lineNumber--){
+    line = lines[lineNumber]
+
+    // if the line looks like a sourcemap comment, convert it and return to bail
+    if (line.indexOf('sourceMappingURL=data:') > -1) {
+      return exports.fromComment(line)
+    }
+  }
 };
 
 
