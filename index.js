@@ -49,20 +49,13 @@ function Converter (sm, opts) {
 
 function convertFromLargeSource(content){
   var lines = content.split('\n');
-  var lineNumber;
   var line;
-
-  // starting with the last line, look for the source map comment
-  for (lineNumber = lines.length - 1; lineNumber > 0; lineNumber--){
-    line = lines[lineNumber]
-
-    // if the line looks like a sourcemap comment, convert it and return to bail
-    if (line.indexOf('sourceMappingURL=data:') > -1) {
-      return exports.fromComment(line)
-    }
+  // find first line which contains a source map starting at end of content 
+  for (var i = lines.length - 1; i > 0; i--) {
+    line = lines[i]
+    if (~line.indexOf('sourceMappingURL=data:')) return exports.fromComment(line);
   }
-};
-
+}
 
 Converter.prototype.toJSON = function (space) {
   return JSON.stringify(this.sourcemap, null, space);
@@ -123,11 +116,9 @@ exports.fromMapFileComment = function (comment, dir) {
 
 // Finds last sourcemap comment in file or returns null if none was found
 exports.fromSource = function (content, largeSource) {
-  var m;
-
   if (largeSource) return convertFromLargeSource(content);
 
-  m = content.match(commentRx);
+  var m = content.match(commentRx);
   commentRx.lastIndex = 0;
   return m ? exports.fromComment(m.pop()) : null;
 };
