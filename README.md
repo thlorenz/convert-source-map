@@ -80,9 +80,14 @@ JSON string is generated.
 
 Converts source map to base64 encoded json string.
 
-### toComment()
+### toComment([options])
 
-Converts source map to base64 encoded json string prefixed with `//# sourceMappingURL=...`.
+Converts source map to an inline comment that can be appended to the source-file.
+
+By default, the comment is formatted like: `//# sourceMappingURL=...`, which you would
+normally see in a JS source file.
+
+When `options.multiline == true`, the comment is formatted like: `/*# sourceMappingURL=... */`, which you would find in a CSS source file.
 
 ### addProperty(key, value)
 
@@ -114,4 +119,3 @@ Returns the regex used to find source map comments pointing to map files.
 
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/thlorenz/convert-source-map/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
