@@ -41,6 +41,13 @@ test('to object returns a copy', function (t) {
   t.end()
 })
 
+test('to multi-line map', function (t) {
+  var c = convert.fromObject(obj);
+  var s = c.toComment({ multiline: true });
+  t.similar(s, /^\/\*# sourceMappingURL=.+ \*\/$/);
+  t.end();
+})
+
 test('from source', function (t) {
   var foo = [
       'function foo() {'
