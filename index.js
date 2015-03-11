@@ -53,7 +53,8 @@ function findLastSourceMapComment(comment, line){
 };
 
 function convertFromLargeSource(content){
-  return content.split('\n').reduce(findLastSourceMapComment, '');
+  var comment = content.split('\n').reduce(findLastSourceMapComment, '')
+  return comment ? exports.fromComment(comment) : null;
 };
 
 
