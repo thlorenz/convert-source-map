@@ -47,6 +47,16 @@ function Converter (sm, opts) {
   }
 }
 
+function findLastSourceMapComment(comment, line){
+  if (line.indexOf('sourceMappingURL=data:') > -1) comment = line;
+  return comment;
+};
+
+function convertFromLargeSource(content){
+  return content.split('\n').reduce(findLastSourceMapComment, '');
+};
+
+
 Converter.prototype.toJSON = function (space) {
   return JSON.stringify(this.sourcemap, null, space);
 };
@@ -105,8 +115,12 @@ exports.fromMapFileComment = function (comment, dir) {
 };
 
 // Finds last sourcemap comment in file or returns null if none was found
-exports.fromSource = function (content) {
-  var m = content.match(commentRx);
+exports.fromSource = function (content, largeSource) {
+  var m;
+
+  if (largeSource) return convertFromLargeSource(content);
+
+  m = content.match(commentRx);
   commentRx.lastIndex = 0;
   return m ? exports.fromComment(m.pop()) : null;
 };
