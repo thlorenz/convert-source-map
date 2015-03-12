@@ -2,7 +2,7 @@
 var fs = require('fs');
 var path = require('path');
 
-var commentRx = /^\s*\/(?:\/|\*)[@#]\s+sourceMappingURL=data:(?:application|text)\/json;(?:charset:\S+;)?base64,(.*)$/mg;
+var commentRx = /^\s*\/(?:\/|\*)[@#]\s+sourceMappingURL=data:(?:application|text)\/json;(?:charset[:=]\S+;)?base64,(.*)$/mg;
 var mapFileCommentRx =
   // //# sourceMappingURL=foo.js.map                       /*# sourceMappingURL=foo.js.map */
   /(?:\/\/[@#]\s+sourceMappingURL=(.*?)\s*$)|(?:\/\*[@#]\s+sourceMappingURL=([^\*]+?)\s*(?:\*\/){1}\s*$)/mg
@@ -47,6 +47,16 @@ function Converter (sm, opts) {
   }
 }
 
+function convertFromLargeSource(content){
+  var lines = content.split('\n');
+  var line;
+  // find first line which contains a source map starting at end of content 
+  for (var i = lines.length - 1; i > 0; i--) {
+    line = lines[i]
+    if (~line.indexOf('sourceMappingURL=data:')) return exports.fromComment(line);
+  }
+}
+
 Converter.prototype.toJSON = function (space) {
   return JSON.stringify(this.sourcemap, null, space);
 };
@@ -56,9 +66,10 @@ Converter.prototype.toBase64 = function () {
   return new Buffer(json).toString('base64');
 };
 
-Converter.prototype.toComment = function () {
+Converter.prototype.toComment = function (options) {
   var base64 = this.toBase64();
-  return '//# sourceMappingURL=data:application/json;base64,' + base64;
+  var data = 'sourceMappingURL=data:application/json;base64,' + base64;
+  return options && options.multiline ? '/*# ' + data + ' */' : '//# ' + data;
 };
 
 // returns copy instead of original
@@ -105,7 +116,9 @@ exports.fromMapFileComment = function (comment, dir) {
 };
 
 // Finds last sourcemap comment in file or returns null if none was found
-exports.fromSource = function (content) {
+exports.fromSource = function (content, largeSource) {
+  if (largeSource) return convertFromLargeSource(content);
+
   var m = content.match(commentRx);
   commentRx.lastIndex = 0;
   return m ? exports.fromComment(m.pop()) : null;

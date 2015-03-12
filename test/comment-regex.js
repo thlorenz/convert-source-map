@@ -11,9 +11,10 @@ function comment(prefix, suffix) {
   return rx.test(prefix + 'sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiIiwic291cmNlcyI6WyJmdW5jdGlvbiBmb28oKSB7XG4gY29uc29sZS5sb2coXCJoZWxsbyBJIGFtIGZvb1wiKTtcbiBjb25zb2xlLmxvZyhcIndobyBhcmUgeW91XCIpO1xufVxuXG5mb28oKTtcbiJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSJ9' + suffix)
 }
 
-function commentWithCharSet(prefix, suffix) {
+function commentWithCharSet(prefix, suffix, sep) {
+  sep = sep || ':';
   rx.lastIndex = 0;
-  return rx.test(prefix + 'sourceMappingURL=data:application/json;charset:utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiIiwic291cmNlcyI6WyJmdW5jdGlvbiBmb28oKSB7XG4gY29uc29sZS5sb2coXCJoZWxsbyBJIGFtIGZvb1wiKTtcbiBjb25zb2xlLmxvZyhcIndobyBhcmUgeW91XCIpO1xufVxuXG5mb28oKTtcbiJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSJ9' + suffix)
+  return rx.test(prefix + 'sourceMappingURL=data:application/json;charset' + sep +'utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiIiwic291cmNlcyI6WyJmdW5jdGlvbiBmb28oKSB7XG4gY29uc29sZS5sb2coXCJoZWxsbyBJIGFtIGZvb1wiKTtcbiBjb25zb2xlLmxvZyhcIndobyBhcmUgeW91XCIpO1xufVxuXG5mb28oKTtcbiJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSJ9' + suffix)
 }
 
 // Source Map v2 Tests
@@ -30,6 +31,7 @@ test('comment regex old spec - @', function (t) {
   ].forEach(function (x) { 
     t.ok(comment(x, ''), 'matches ' + x) 
     t.ok(commentWithCharSet(x, ''), 'matches ' + x + ' with charset') 
+    t.ok(commentWithCharSet(x, '', '='), 'matches ' + x + ' with charset')
   });
 
   [
@@ -52,6 +54,7 @@ test('comment regex new spec - #', function (t) {
   ].forEach(function (x) { 
     t.ok(comment(x, ''), 'matches ' + x) 
     t.ok(commentWithCharSet(x, ''), 'matches ' + x + ' with charset') 
+    t.ok(commentWithCharSet(x, '', '='), 'matches ' + x + ' with charset')
   });
   
   [ 
