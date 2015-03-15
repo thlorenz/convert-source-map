@@ -139,10 +139,10 @@ exports.removeMapFileComments = function (src) {
 
 Object.defineProperty(exports, 'commentRegex', function () {
   commentRx.lastIndex = 0;
-  return commentRx;
+  return commentRx; 
 });
 
 Object.defineProperty(exports, 'mapFileCommentRegex', function () {
-    mapFileCommentRx.lastIndex = 0;
-    return mapFileCommentRx;
+  mapFileCommentRx.lastIndex = 0;
+  return mapFileCommentRx; 
 });
