@@ -137,12 +137,12 @@ exports.removeMapFileComments = function (src) {
   return src.replace(mapFileCommentRx, '');
 };
 
-Object.defineProperty(exports, 'commentRegex', function () {
+Object.defineProperty(exports, 'commentRegex', {get: function () {
   commentRx.lastIndex = 0;
   return commentRx; 
-});
+}});
 
-Object.defineProperty(exports, 'mapFileCommentRegex', function () {
+Object.defineProperty(exports, 'mapFileCommentRegex', {get: function () {
   mapFileCommentRx.lastIndex = 0;
   return mapFileCommentRx; 
-});
+}});
