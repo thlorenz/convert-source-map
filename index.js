@@ -137,12 +137,16 @@ exports.removeMapFileComments = function (src) {
   return src.replace(mapFileCommentRx, '');
 };
 
-exports.__defineGetter__('commentRegex', function () {
-  commentRx.lastIndex = 0;
-  return commentRx; 
+Object.defineProperty(exports, 'commentRegex', {
+  get: function getCommentRegex () {
+    commentRx.lastIndex = 0;
+    return commentRx;
+  }
 });
 
-exports.__defineGetter__('mapFileCommentRegex', function () {
-  mapFileCommentRx.lastIndex = 0;
-  return mapFileCommentRx; 
+Object.defineProperty(exports, 'mapFileCommentRegex', {
+  get: function getMapFileCommentRegex () {
+    mapFileCommentRx.lastIndex = 0;
+    return mapFileCommentRx;
+  }
 });
