@@ -65,44 +65,49 @@ test('comment regex new spec - #', function (t) {
   t.end()
 })
 
-function mapFileComment(s) {
+function mapFileCommentWrap(s1, s2) {
   mapFileRx.lastIndex = 0;
-  return mapFileRx.test(s + 'sourceMappingURL=foo.js.map')
+  return mapFileRx.test(s1 + 'sourceMappingURL=foo.js.map' + s2)
 }
 
 test('mapFileComment regex old spec - @', function (t) {
 
   [ 
-    '//@ ',
-    '  //@ ',
-    '\t//@ ',
-    '///@ ',
-  ].forEach(function (x) { t.ok(mapFileComment(x), 'matches ' + x) });
+    ['//@ ', ''],
+    ['  //@ ', ''],                 // with leading spaces
+    ['\t//@ ', ''],                 // with a leading tab
+    ['///@ ', ''],                  // with a leading text
+    [';//@ ', ''],                  // with a leading text
+    ['return//@ ', ''],             // with a leading text
+  ].forEach(function (x) { t.ok(mapFileCommentWrap(x[0], x[1]), 'matches ' + x.join(' :: ')) });
 
   [ 
-    ' @// @',
-  ].forEach(function (x) { t.ok(!mapFileComment(x), 'does not match ' + x) })
+    [' @// @', ''],
+    ['var sm = "//@ ', '"'],        // not inside a string
+    ['var sm = \'//@ ', '\''],      // not inside a string
+    ['var sm = \' //@ ', '\''],     // not inside a string
+  ].forEach(function (x) { t.ok(!mapFileCommentWrap(x[0], x[1]), 'does not match ' + x.join(' :: ')) })
   t.end()
 })
 
 test('mapFileComment regex new spec - #', function (t) {
   [ 
-    '//@ ',
-    '  //@ ', // with leading space
-    '\t//@ ', // with leading tab
-    '//@ ', // with leading text
-  ].forEach(function (x) { t.ok(mapFileComment(x), 'matches ' + x) });
+    ['//# ', ''],
+    ['  //# ', ''],                 // with leading space
+    ['\t//# ', ''],                 // with leading tab
+    ['///# ', ''],                  // with leading text
+    [';//# ', ''],                  // with leading text
+    ['return//# ', ''],             // with leading text
+  ].forEach(function (x) { t.ok(mapFileCommentWrap(x[0], x[1]), 'matches ' + x.join(' :: ')) });
 
   [ 
-    ' #// #',
-  ].forEach(function (x) { t.ok(!mapFileComment(x), 'does not match ' + x) })
+    [' #// #', ''],
+    ['var sm = "//# ', '"'],        // not inside a string
+    ['var sm = \'//# ', '\''],      // not inside a string
+    ['var sm = \' //# ', '\''],     // not inside a string
+  ].forEach(function (x) { t.ok(!mapFileCommentWrap(x[0], x[1]), 'does not match ' + x.join(' :: ')) })
   t.end()
 })
-
-function mapFileCommentWrap(s1, s2) {
-  mapFileRx.lastIndex = 0;
-  return mapFileRx.test(s1 + 'sourceMappingURL=foo.js.map' + s2)
-}
 
 test('mapFileComment regex /* */ old spec - @', function (t) {
   [ [ '/*@ ', '*/' ]
