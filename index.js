@@ -2,7 +2,7 @@
 var fs = require('fs');
 var path = require('path');
 
-var commentRx = /^\s*\/(?:\/|\*)[@#]\s+sourceMappingURL=data:(?:application|text)\/json;(?:charset[:=]\S+;)?base64,(.*)$/mg;
+var commentRx = /^\s*\/(?:\/|\*)[@#]\s+sourceMappingURL=data:(?:application|text)\/json;(?:charset[:=]\S+?;)?base64,(?:.*)$/mg;
 var mapFileCommentRx =
   //Example (Extra space between slashes added to solve Safari bug. Exclude space in production):
   //     / /# sourceMappingURL=foo.js.map           /*# sourceMappingURL=foo.js.map */
@@ -42,29 +42,6 @@ function Converter (sm, opts) {
   if (opts.isJSON || opts.isEncoded) sm = JSON.parse(sm);
 
   this.sourcemap = sm;
-}
-
-function convertFromLargeSource(content){
-  var lines = content.split('\n');
-  var line;
-  // find first line which contains a source map starting at end of content
-  for (var i = lines.length - 1; i > 0; i--) {
-    line = lines[i]
-    if (~line.indexOf('sourceMappingURL=data:')) return exports.fromComment(line);
-  }
-}
-var commentRxLarge = /^(\s*)\/(?:\/|\*)[@#]\s+sourceMappingURL=data:(?:application|text)\/json;(?:charset[:=]\S+;)?base64,/g;
-
-function removeCommentsFromLargeSource(content) {
-  var lines = content.split("\n");
-  var line;
-  // find first line which contains a source map starting at end of content
-  for (var i = lines.length - 1; i >= 0; i--) {
-    line = lines[i];
-    var match = line.substr(0, 1024).match(commentRxLarge);
-    if (match) return lines.slice(0, i).concat([match[1]]).join("\n");
-  }
-  return content;
 }
 
 Converter.prototype.toJSON = function (space) {
@@ -126,34 +103,22 @@ exports.fromMapFileComment = function (comment, dir) {
 };
 
 // Finds last sourcemap comment in file or returns null if none was found
-exports.fromSource = function (content, largeSource) {
-  if (largeSource) {
-    var res = convertFromLargeSource(content);
-    return res ? res : null;
-  }
-
+exports.fromSource = function (content) {
   var m = content.match(commentRx);
-  commentRx.lastIndex = 0;
   return m ? exports.fromComment(m.pop()) : null;
 };
 
 // Finds last sourcemap comment in file or returns null if none was found
 exports.fromMapFileSource = function (content, dir) {
   var m = content.match(mapFileCommentRx);
-  mapFileCommentRx.lastIndex = 0;
   return m ? exports.fromMapFileComment(m.pop(), dir) : null;
 };
 
-exports.removeComments = function (src, largeSource) {
-  if (largeSource) {
-    return removeCommentsFromLargeSource(src);
-  }
-  commentRx.lastIndex = 0;
+exports.removeComments = function (src) {
   return src.replace(commentRx, '');
 };
 
 exports.removeMapFileComments = function (src) {
-  mapFileCommentRx.lastIndex = 0;
   return src.replace(mapFileCommentRx, '');
 };
 
@@ -164,14 +129,12 @@ exports.generateMapFileComment = function (file, options) {
 
 Object.defineProperty(exports, 'commentRegex', {
   get: function getCommentRegex () {
-    commentRx.lastIndex = 0;
     return commentRx;
   }
 });
 
 Object.defineProperty(exports, 'mapFileCommentRegex', {
   get: function getMapFileCommentRegex () {
-    mapFileCommentRx.lastIndex = 0;
     return mapFileCommentRx;
   }
 });
