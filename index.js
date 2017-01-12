@@ -53,6 +53,19 @@ function convertFromLargeSource(content){
     if (~line.indexOf('sourceMappingURL=data:')) return exports.fromComment(line);
   }
 }
+var commentRxLarge = /^(\s*)\/(?:\/|\*)[@#]\s+sourceMappingURL=data:(?:application|text)\/json;(?:charset[:=]\S+;)?base64,/g;
+
+function removeCommentsFromLargeSource(content) {
+  var lines = content.split("\n");
+  var line;
+  // find first line which contains a source map starting at end of content
+  for (var i = lines.length - 1; i >= 0; i--) {
+    line = lines[i];
+    var match = line.substr(0, 1024).match(commentRxLarge);
+    if (match) return lines.slice(0, i).concat([match[1]]).join("\n");
+  }
+  return content;
+}
 
 Converter.prototype.toJSON = function (space) {
   return JSON.stringify(this.sourcemap, null, space);
@@ -131,7 +144,10 @@ exports.fromMapFileSource = function (content, dir) {
   return m ? exports.fromMapFileComment(m.pop(), dir) : null;
 };
 
-exports.removeComments = function (src) {
+exports.removeComments = function (src, largeSource) {
+  if (largeSource) {
+    return removeCommentsFromLargeSource(src);
+  }
   commentRx.lastIndex = 0;
   return src.replace(commentRx, '');
 };

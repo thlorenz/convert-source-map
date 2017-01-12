@@ -101,9 +101,13 @@ Sets given property to the source map. If property doesn't exist it is added, ot
 
 Gets given property of the source map.
 
-### removeComments(src)
+### removeComments(src[, largeSource])
 
 Returns `src` with all source map comments removed
+
+If `largeSource` is set to `true`, an algorithm that does not use regex is applied to find the source map. This is faster and especially useful if you're running into "call stack size exceeded" errors with the default algorithm.
+
+However, it is less accurate and may match content that isn't a source map comment.
 
 ### removeMapFileComments(src)
 
