@@ -14,7 +14,7 @@
   "dependencies": {},
   "devDependencies": {
     "inline-source-map": "~0.6.2",
-    "tap": "^9.0.3"
+    "tap": "~9.0.0"
   },
   "keywords": [
     "convert",
