@@ -5,13 +5,13 @@
 Converts a source-map from/to  different formats and allows adding/changing properties.
 
 ```js
-var convert = require('convert-source-map');
+import convert from 'convert-source-map';
 
-var json = convert
+const json = convert
   .fromComment('//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZm9vLmpzIiwic291cmNlcyI6WyJjb25zb2xlLmxvZyhcImhpXCIpOyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSIsInNvdXJjZVJvb3QiOiIvIn0=')
   .toJSON();
 
-var modified = convert
+const modified = convert
   .fromComment('//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZm9vLmpzIiwic291cmNlcyI6WyJjb25zb2xlLmxvZyhcImhpXCIpOyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSIsInNvdXJjZVJvb3QiOiIvIn0=')
   .setProperty('sources', [ 'CONSOLE.LOG("HI");' ])
   .toJSON();
