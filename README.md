@@ -107,11 +107,11 @@ Returns `src` with all source map comments pointing to map files removed.
 
 ### commentRegex
 
-Returns the regex used to find source map comments.
+Provides __a fresh__ RegExp each time it is accessed. Can be used to find source map comments.
 
 ### mapFileCommentRegex
 
-Returns the regex used to find source map comments pointing to map files.
+Provides __a fresh__ RegExp each time it is accessed. Can be used to find source map comments pointing to map files.
 
 ### generateMapFileComment(file, [options])
 
