@@ -28,10 +28,7 @@ function stripComment(sm) {
 function readFromFileMap(sm, dir) {
   // NOTE: this will only work on the server since it attempts to read the map file
 
-  var r = exports.mapFileCommentRegex.exec(sm);
-
-  // for some odd reason //# .. captures in 1 and /* .. */ in 2
-  var filename = r[1] || r[2];
+  var filename = exports.getMapFileCommentValue(sm);
   var filepath = path.resolve(dir, filename);
 
   try {
