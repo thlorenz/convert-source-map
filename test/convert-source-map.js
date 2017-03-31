@@ -253,3 +253,87 @@ test('mapFileCommentRegex returns new RegExp on each get', function(t) {
 
   t.end()
 })
+
+test('get value of a comment', function(t) {
+  var foo = [
+      'function foo() {'
+    , ' console.log("hello I am foo");'
+    , ' console.log("who are you");'
+    , '}'
+    , ''
+    , 'foo();'
+    , ''
+    ].join('\n')
+  , map = '//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiIiwic291cmNlcyI6WyJmdW5jdGlvbiBmb28oKSB7XG4gY29uc29sZS5sb2coXCJoZWxsbyBJIGFtIGZvb1wiKTtcbiBjb25zb2xlLmxvZyhcIndobyBhcmUgeW91XCIpO1xufVxuXG5mb28oKTtcbiJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSJ9'
+  , expected = 'data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiIiwic291cmNlcyI6WyJmdW5jdGlvbiBmb28oKSB7XG4gY29uc29sZS5sb2coXCJoZWxsbyBJIGFtIGZvb1wiKTtcbiBjb25zb2xlLmxvZyhcIndobyBhcmUgeW91XCIpO1xufVxuXG5mb28oKTtcbiJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSJ9'
+
+  t.equal(
+    convert.getCommentValue(foo + map),
+    expected,
+    'returns only the base64 portion of the sourceMappingURL comment'
+  )
+
+  t.equal(
+    convert.getCommentValue(foo),
+    null,
+    'returns null if no comment'
+  )
+
+  t.end()
+})
+
+test('get value of a mapFileComment with //', function(t) {
+  var foo = [
+      'function foo() {'
+    , ' console.log("hello I am foo");'
+    , ' console.log("who are you");'
+    , '}'
+    , ''
+    , 'foo();'
+    , ''
+    ].join('\n')
+  , map = '//# sourceMappingURL=foo.js.map'
+  , expected = 'foo.js.map'
+
+  t.equal(
+    convert.getMapFileCommentValue(foo + map),
+    expected,
+    'returns only the filepath of the sourceMappingURL comment'
+  )
+
+  t.equal(
+    convert.getMapFileCommentValue(foo),
+    null,
+    'returns null if no mapFileComment'
+  )
+
+  t.end()
+})
+
+test('get value of a mapFileComment with /**/', function(t) {
+  var foo = [
+      'function foo() {'
+    , ' console.log("hello I am foo");'
+    , ' console.log("who are you");'
+    , '}'
+    , ''
+    , 'foo();'
+    , ''
+    ].join('\n')
+  , map = '/*# sourceMappingURL=foo.js.map */'
+  , expected = 'foo.js.map'
+
+  t.equal(
+    convert.getMapFileCommentValue(foo + map),
+    expected,
+    'returns only the filepath of the sourceMappingURL comment'
+  )
+
+  t.equal(
+    convert.getMapFileCommentValue(foo),
+    null,
+    'returns null if no mapFileComment'
+  )
+
+  t.end()
+})

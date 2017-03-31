@@ -4,7 +4,7 @@ var path = require('path');
 
 Object.defineProperty(exports, 'commentRegex', {
   get: function getCommentRegex () {
-    return /^\s*\/(?:\/|\*)[@#]\s+sourceMappingURL=data:(?:application|text)\/json;(?:charset[:=]\S+?;)?base64,(?:.*)$/mg;
+    return /^\s*\/(?:\/|\*)[@#]\s+sourceMappingURL=(data:(?:application|text)\/json;(?:charset[:=]\S+?;)?base64,(?:.*))$/mg;
   }
 });
 
@@ -133,4 +133,23 @@ exports.removeMapFileComments = function (src) {
 exports.generateMapFileComment = function (file, options) {
   var data = 'sourceMappingURL=' + file;
   return options && options.multiline ? '/*# ' + data + ' */' : '//# ' + data;
+};
+
+exports.getCommentValue = function (src) {
+  var comment = exports.commentRegex.exec(src);
+  if (comment && comment[1]) {
+    return comment[1];
+  }
+  return null;
+};
+
+exports.getMapFileCommentValue = function(src) {
+  var mapFileComment = exports.mapFileCommentRegex.exec(src);
+  if (mapFileComment && mapFileComment[1]) {
+    return mapFileComment[1];
+  }
+  if (mapFileComment && mapFileComment[2]) {
+    return mapFileComment[2];
+  }
+  return null;
 };
