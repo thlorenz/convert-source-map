@@ -12,7 +12,7 @@ Object.defineProperty(exports, 'mapFileCommentRegex', {
   get: function getMapFileCommentRegex () {
     //Example (Extra space between slashes added to solve Safari bug. Exclude space in production):
     //     / /# sourceMappingURL=foo.js.map           /*# sourceMappingURL=foo.js.map */
-    return /(?:\/\/[@#][ \t]+sourceMappingURL=([^\s'"]+?)[ \t]*$)|(?:\/\*[@#][ \t]+sourceMappingURL=([^\*]+?)[ \t]*(?:\*\/){1}[ \t]*$)/mg;
+    return /(?:\/\/[@#][ \t]+sourceMappingURL=([^\s'"]+?)(?:\?.*?)?[ \t]*$)|(?:\/\*[@#][ \t]+sourceMappingURL=([^\*]+?)(?:\?.*?)?[ \t]*(?:\*\/){1}[ \t]*$)/mg;
   }
 });
 
