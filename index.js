@@ -11,8 +11,8 @@ Object.defineProperty(exports, 'commentRegex', {
 Object.defineProperty(exports, 'mapFileCommentRegex', {
   get: function getMapFileCommentRegex () {
     //Example (Extra space between slashes added to solve Safari bug. Exclude space in production):
-    //     / /# sourceMappingURL=foo.js.map           /*# sourceMappingURL=foo.js.map */
-    return /(?:\/\/[@#][ \t]+sourceMappingURL=([^\s'"]+?)(?:\?.*?)?[ \t]*$)|(?:\/\*[@#][ \t]+sourceMappingURL=([^\*]+?)(?:\?.*?)?[ \t]*(?:\*\/){1}[ \t]*$)/mg;
+    //     / /# sourceMappingURL=foo.js.map                      /*# sourceMappingURL=foo.js.map */
+    return /(?:\/\/[@#][ \t]+sourceMappingURL=([^\s'"]+?)[ \t]*$)|(?:\/\*[@#][ \t]+sourceMappingURL=([^\*]+?)[ \t]*(?:\*\/){1}[ \t]*$)/mg;
   }
 });
 
@@ -32,6 +32,11 @@ function readFromFileMap(sm, dir) {
 
   // for some odd reason //# .. captures in 1 and /* .. */ in 2
   var filename = r[1] || r[2];
+  // Remove the query of the mapping URL if it contains.
+  if (filename.indexOf('?') > -1) {
+    // It's safe to remove, since `?` is not allowed inside a filename/filepath.
+    filename = filename.replace(/\?.*$/, '')
+  }
   var filepath = path.resolve(dir, filename);
 
   try {
