@@ -173,6 +173,19 @@ test('adding properties', function (t) {
   t.end()
 })
 
+test('adding properties, existing property', function (t) {
+  try {
+    convert
+      .fromJSON(json)
+      .addProperty('foo', 'bar')
+      .addProperty('foo', 'bar');
+  }
+  catch(error) {
+    t.equal(error.message, 'property "foo" already exists on the sourcemap, use set property instead', 'the error message includes the property name')
+  }
+  t.end()
+})
+
 test('setting properties', function (t) {
   var mod = convert
     .fromJSON(json)

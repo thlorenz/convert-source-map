@@ -73,7 +73,7 @@ Converter.prototype.toObject = function () {
 };
 
 Converter.prototype.addProperty = function (key, value) {
-  if (this.sourcemap.hasOwnProperty(key)) throw new Error('property %s already exists on the sourcemap, use set property instead');
+  if (this.sourcemap.hasOwnProperty(key)) throw new Error('property "' + key + '" already exists on the sourcemap, use set property instead');
   return this.setProperty(key, value);
 };
 
