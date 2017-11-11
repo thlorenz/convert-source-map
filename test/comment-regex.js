@@ -82,6 +82,7 @@ test('mapFileComment regex old spec - @', function (t) {
 
   [ 
     [' @// @', ''],
+    ['var sm = `//@ ', '`'],        // not inside a string
     ['var sm = "//@ ', '"'],        // not inside a string
     ['var sm = \'//@ ', '\''],      // not inside a string
     ['var sm = \' //@ ', '\''],     // not inside a string
@@ -101,6 +102,7 @@ test('mapFileComment regex new spec - #', function (t) {
 
   [ 
     [' #// #', ''],
+    ['var sm = `//# ', '`'],        // not inside a string
     ['var sm = "//# ', '"'],        // not inside a string
     ['var sm = \'//# ', '\''],      // not inside a string
     ['var sm = \' //# ', '\''],     // not inside a string
