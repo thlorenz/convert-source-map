@@ -57,7 +57,7 @@ Converter.prototype.toJSON = function (space) {
 
 Converter.prototype.toBase64 = function () {
   var json = this.toJSON();
-  return new Buffer(json).toString('base64');
+  return Buffer.from(json).toString('base64');
 };
 
 Converter.prototype.toComment = function (options) {
