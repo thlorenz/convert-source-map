@@ -5,7 +5,7 @@ var SafeBuffer = require('safe-buffer');
 
 Object.defineProperty(exports, 'commentRegex', {
   get: function getCommentRegex () {
-    return /^\s*\/(?:\/|\*)[@#]\s+sourceMappingURL=data:(?:application|text)\/json;(?:charset[:=]\S+?;)?base64,(?:.*)$/mg;
+    return /\/(?:\/|\*)[@#]\s+sourceMappingURL=data:(?:application|text)\/json;(?:charset[:=]\S+?;)?base64,(?:.*)$/mg;
   }
 });
 
