@@ -1,15 +1,15 @@
-'use strict';
+'use strict'
 
-var convert = require('..');
+const convert = require('..')
 
-var json = convert
+const json = convert
   .fromComment('//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYnVpbGQvZm9vLm1pbi5qcyIsInNvdXJjZXMiOlsic3JjL2Zvby5qcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSIsInNvdXJjZVJvb3QiOiIvIn0=')
-  .toJSON();
+  .toJSON()
 
-var modified = convert
+const modified = convert
   .fromComment('//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYnVpbGQvZm9vLm1pbi5qcyIsInNvdXJjZXMiOlsic3JjL2Zvby5qcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSIsInNvdXJjZVJvb3QiOiIvIn0=')
-  .setProperty('sources', [ 'SRC/FOO.JS' ])
-  .toJSON();
+  .setProperty('sources', ['SRC/FOO.JS'])
+  .toJSON()
 
-console.log(json);
-console.log(modified);
+console.log(json)
+console.log(modified)

@@ -11,13 +11,6 @@
     "url": "git://github.com/thlorenz/convert-source-map.git"
   },
   "homepage": "https://github.com/thlorenz/convert-source-map",
-  "dependencies": {
-    "safe-buffer": "~5.1.1"
-  },
-  "devDependencies": {
-    "inline-source-map": "~0.6.2",
-    "tap": "~9.0.0"
-  },
   "keywords": [
     "convert",
     "sourcemap",
@@ -33,12 +26,16 @@
   },
   "license": "MIT",
   "engine": {
-    "node": ">=0.6"
+    "node": ">=12.20"
   },
   "files": [
     "index.js"
   ],
   "browser": {
     "fs": false
+  },
+  "devDependencies": {
+    "inline-source-map": "^0.6.2",
+    "tap": "^15.0.9"
   }
 }
