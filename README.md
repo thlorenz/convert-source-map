@@ -33,13 +33,17 @@ Returns source map converter from given object.
 
 Returns source map converter from given json string.
 
+### fromURI(uri)
+
+Returns source map converter from given uri encoded json string.
+
 ### fromBase64(base64)
 
 Returns source map converter from given base64 encoded json string.
 
 ### fromComment(comment)
 
-Returns source map converter from given base64 encoded json string prefixed with `//# sourceMappingURL=...`.
+Returns source map converter from given base64 or uri encoded json string prefixed with `//# sourceMappingURL=...`.
 
 ### fromMapFileComment(comment, mapFileDir)
 
@@ -50,11 +54,11 @@ generated file, i.e. the one containing the source map.
 
 ### fromSource(source)
 
-Finds last sourcemap comment in file and returns source map converter or returns null if no source map comment was found.
+Finds last sourcemap comment in file and returns source map converter or returns `null` if no source map comment was found.
 
 ### fromMapFileSource(source, mapFileDir)
 
-Finds last sourcemap comment in file and returns source map converter or returns null if no source map comment was
+Finds last sourcemap comment in file and returns source map converter or returns `null` if no source map comment was
 found.
 
 The sourcemap will be read from the map file found by parsing `# sourceMappingURL=file` comment. For more info see
@@ -70,6 +74,10 @@ Converts source map to json string. If `space` is given (optional), this will be
 [JSON.stringify](https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/JSON/stringify) when the
 JSON string is generated.
 
+### toURI()
+
+Converts source map to uri encoded json string.
+
 ### toBase64()
 
 Converts source map to base64 encoded json string.
@@ -80,6 +88,8 @@ Converts source map to an inline comment that can be appended to the source-file
 
 By default, the comment is formatted like: `//# sourceMappingURL=...`, which you would
 normally see in a JS source file.
+
+When `options.encoding == 'uri'`, the data will be uri encoded, otherwise they will be base64 encoded.
 
 When `options.multiline == true`, the comment is formatted like: `/*# sourceMappingURL=... */`, which you would find in a CSS source file.
 
@@ -105,7 +115,15 @@ Returns `src` with all source map comments pointing to map files removed.
 
 ### commentRegex
 
+Provides __a fresh__ RegExp each time it is accessed. Can be used to find source map comments. Deprecated, left for compatibility. Does not comply with RFC 2397.
+
+### commentRegex2
+
 Provides __a fresh__ RegExp each time it is accessed. Can be used to find source map comments.
+
+### commentRegex3
+
+Breaks down a source map comment into groups: Groups: 1: media type, 2: MIME type, 3: charset, 4: encoding, 5: data.
 
 ### mapFileCommentRegex
 

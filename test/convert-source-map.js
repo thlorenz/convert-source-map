@@ -4,30 +4,45 @@
 var test = require('tap').test
   , generator = require('inline-source-map')
   , convert = require('..')
+  , decodeBase64 = typeof Buffer.from ?
+    function decodeBase64(base64) {
+      return Buffer.from(base64, 'base64').toString();
+    } :
+    function decodeBase64(base64) {
+      return new Buffer(base64, 'base64').toString();
+    }
 
 var gen = generator({charset:"utf-8"})
     .addMappings('foo.js', [{ original: { line: 2, column: 3 } , generated: { line: 5, column: 10 } }], { line: 5 })
     .addGeneratedMappings('bar.js', 'var a = 2;\nconsole.log(a)', { line: 23, column: 22 })
 
   , base64 = gen.base64Encode()
+  , uri = encodeURIComponent(decodeBase64(base64))
   , comment = gen.inlineMappingUrl()
+  , comment2 = '//# sourceMappingURL=data:application/json;charset=utf-8,' + uri
   , json = gen.toString()
   , obj = JSON.parse(json)
 
 test('different formats', function (t) {
 
-  t.equal(convert.fromComment(comment).toComment(), comment, 'comment -> comment')
+  t.equal(convert.fromComment(comment).toComment(), comment, 'comment -> comment (base64)')
+  t.equal(convert.fromComment(comment2).toComment({ encoding: 'uri' }), comment2, 'comment -> comment (uri)')
   t.equal(convert.fromComment(comment).toBase64(), base64, 'comment -> base64')
+  t.equal(convert.fromComment(comment).toURI(), uri, 'comment -> uri')
   t.equal(convert.fromComment(comment).toJSON(), json, 'comment -> json')
   t.deepEqual(convert.fromComment(comment).toObject(), obj, 'comment -> object')
 
   t.equal(convert.fromBase64(base64).toBase64(), base64, 'base64 -> base64')
+  t.equal(convert.fromURI(uri).toURI(), uri, 'uri -> uri')
   t.equal(convert.fromBase64(base64).toComment(), comment, 'base64 -> comment')
   t.equal(convert.fromBase64(base64).toJSON(), json, 'base64 -> json')
+  t.equal(convert.fromURI(uri).toJSON(), json, 'uri -> json')
   t.deepEqual(convert.fromBase64(base64).toObject(), obj, 'base64 -> object')
+  t.deepEqual(convert.fromURI(uri).toObject(), obj, 'uri -> object')
 
   t.equal(convert.fromJSON(json).toJSON(), json, 'json -> json')
   t.equal(convert.fromJSON(json).toBase64(), base64, 'json -> base64')
+  t.equal(convert.fromJSON(json).toURI(), uri, 'json -> uri')
   t.equal(convert.fromJSON(json).toComment(), comment, 'json -> comment')
   t.deepEqual(convert.fromJSON(json).toObject(), obj, 'json -> object')
   t.end()
