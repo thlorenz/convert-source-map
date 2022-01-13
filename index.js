@@ -1,7 +1,6 @@
 'use strict';
 var fs = require('fs');
 var path = require('path');
-var SafeBuffer = require('safe-buffer');
 
 Object.defineProperty(exports, 'commentRegex', {
   get: function getCommentRegex () {
@@ -16,10 +15,16 @@ Object.defineProperty(exports, 'mapFileCommentRegex', {
   }
 });
 
-
-function decodeBase64(base64) {
-  return (SafeBuffer.Buffer.from(base64, 'base64') || "").toString();
-}
+var decodeBase64 = typeof Buffer !== 'undefined' ? Buffer.from ?
+  function decodeBase64(base64) {
+    return Buffer.from(base64, 'base64').toString();
+  } :
+  function decodeBase64(base64) {
+    return new Buffer(base64, 'base64').toString();
+  } :
+  function decodeBase64(base64) {
+    return decodeURIComponent(escape(atob(base64)));
+  };
 
 function stripComment(sm) {
   return sm.split(',').pop();
@@ -56,10 +61,19 @@ Converter.prototype.toJSON = function (space) {
   return JSON.stringify(this.sourcemap, null, space);
 };
 
-Converter.prototype.toBase64 = function () {
-  var json = this.toJSON();
-  return (SafeBuffer.Buffer.from(json, 'utf8') || "").toString('base64');
-};
+Converter.prototype.toBase64 = typeof Buffer !== 'undefined' ? Buffer.from ?
+  function () {
+    var json = this.toJSON();
+    return Buffer.from(json, 'utf8').toString('base64');
+  } :
+  function () {
+    var json = this.toJSON();
+    return new Buffer(json, 'utf8').toString('base64');
+  } :
+  function () {
+    var json = this.toJSON();
+    return btoa(unescape(encodeURIComponent(json)));
+  };
 
 Converter.prototype.toComment = function (options) {
   var base64 = this.toBase64();
