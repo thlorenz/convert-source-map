@@ -45,18 +45,82 @@ Returns source map converter from given base64 encoded json string.
 
 Returns source map converter from given base64 or uri encoded json string prefixed with `//# sourceMappingURL=...`.
 
-### fromMapFileComment(comment, mapFileDir)
+### fromMapFileComment(comment, mapFileDir, readMap)
 
 Returns source map converter from given `filename` by parsing `//# sourceMappingURL=filename`.
 
 `filename` must point to a file that is found inside the `mapFileDir`. Most tools store this file right next to the
 generated file, i.e. the one containing the source map.
 
+`readMap` must be a `function (filepath)`, which returns either a string with the source map read from the file synchronously, or a `Promise` if the source map will be read asynchronously. If `readMap` returns string, `fromMapFileComment` will return a source map converter and other methods from its interface will be chainable. If `readMap` returns a `Promise`, `fromMapFileComment` will return a `Promise` too and the next access to the source map converter will need to be handled asynchronously. The `Promise` will be either resolved with the source map converter or rejected with an error. The only method required from a `Promise` instance returned by `readMap` is `then(success, error)`; not the full standard.
+
+For example, a synchronous way in Node.js:
+
+```js
+var convert = require('convert-source-map');
+var fs = require('fs');
+
+function readMap(filepath) {
+  return fs.readFileSync(filepath, 'utf8');
+}
+
+var json = convert
+  .fromMapFileComment('//# sourceMappingURL=map-file-comment.css.map', '.', readMap)
+  .toJSON();
+console.log(json);
+```
+
+
+For example, an asynchronous way in Node.js:
+
+```js
+var convert = require('convert-source-map');
+var fs = require('fs');
+
+function readMap(filepath) {
+  return fs.readFile(filepath, 'utf8');
+}
+
+var converter = await convert.fromMapFileComment('//# sourceMappingURL=map-file-comment.css.map', '.', readMap)
+var json = converter.toJSON();
+console.log(json);
+```
+
+For example, an asynchronous way in the browser:
+
+```js
+var convert = require('convert-source-map');
+
+function readMap(url) {
+  return new Promise(function (resolve, reject) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.onreadystatechange = onreadystatechange;
+    xhr.send(null)
+
+    function onreadystatechange() {
+      if (xhr.readyState !== 4 return;
+      if (xhr.status === 200) resolve(xhr.responseText);
+      else reject(new Error(xhr.statusText));
+    }
+  });
+}
+
+convert
+  .fromMapFileComment('//# sourceMappingURL=map-file-comment.css.map', '/assets', readMap)
+  .then(function (converter) {
+    var json = converter.toJSON();
+    console.log(json);
+  }, function (error) {
+    console.error(error);
+  });
+```
+
 ### fromSource(source)
 
 Finds last sourcemap comment in file and returns source map converter or returns `null` if no source map comment was found.
 
-### fromMapFileSource(source, mapFileDir)
+### fromMapFileSource(source, mapFileDir, readMap)
 
 Finds last sourcemap comment in file and returns source map converter or returns `null` if no source map comment was
 found.

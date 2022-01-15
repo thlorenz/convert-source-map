@@ -1,6 +1,4 @@
 'use strict';
-var fs = require('fs');
-var path = require('path');
 
 Object.defineProperty(exports, 'commentRegex', {
   get: function getCommentRegex () {
@@ -47,28 +45,30 @@ function stripComment(sm) {
   return sm.split(',').pop();
 }
 
-function readFromFileMap(sm, dir) {
-  // NOTE: this will only work on the server since it attempts to read the map file
-
+function readFromFileMap(sm, dir, readMap) {
   var r = exports.mapFileCommentRegex.exec(sm);
-
   // for some odd reason //# .. captures in 1 and /* .. */ in 2
   var filename = r[1] || r[2];
-  var filepath = path.resolve(dir, filename);
+  var filepath, sm;
+
+  if (dir.endsWith('/')) dir = dir.substring(0, dir.length - 1);
+  if (filename.startsWith('/')) filename = filename.substring(1);
+  filepath = dir + '/' + filename;
 
   try {
-    return fs.readFileSync(filepath, 'utf8');
+    sm = readMap(filepath);
+    return typeof sm === 'string' ? sm : sm.then(undefined, throwError);
   } catch (e) {
+    throwError(e);
+  }
+
+  function throwError(e) {
     throw new Error('An error occurred while trying to read the map file at ' + filepath + '\n' + e);
   }
 }
 
 function Converter (sm, opts) {
   opts = opts || {};
-
-  if (opts.isFileComment) {
-    sm = readFromFileMap(sm, opts.commentFileDir);
-  }
 
   if (opts.hasComment) {
     sm = stripComment(sm);
@@ -182,8 +182,13 @@ exports.fromComment = function (comment) {
   return new Converter(comment, { encoding: encoding, hasComment: true });
 };
 
-exports.fromMapFileComment = function (comment, dir) {
-  return new Converter(comment, { commentFileDir: dir, isFileComment: true, isJSON: true });
+exports.fromMapFileComment = function (comment, dir, readMap) {
+  var sm = readFromFileMap(comment, dir, readMap);
+  return typeof sm === 'string' ? newConverter(sm) : sm.then(newConverter);
+
+  function newConverter(sm) {
+    return new Converter(sm, { isJSON: true });
+  }
 };
 
 // Finds last sourcemap comment in file or returns null if none was found
@@ -193,9 +198,9 @@ exports.fromSource = function (content) {
 };
 
 // Finds last sourcemap comment in file or returns null if none was found
-exports.fromMapFileSource = function (content, dir) {
+exports.fromMapFileSource = function (content, dir, readMap) {
   var m = content.match(exports.mapFileCommentRegex);
-  return m ? exports.fromMapFileComment(m.pop(), dir) : null;
+  return m ? exports.fromMapFileComment(m.pop(), dir, readMap) : null;
 };
 
 exports.removeComments = function (src) {
