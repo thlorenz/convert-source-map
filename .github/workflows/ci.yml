@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: ["0.10", "0.12", "4", "6", "8", "10", "12", "14", "16", "18"]
+        node: ["4", "6", "8", "10", "12", "14", "16", "18"]
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
