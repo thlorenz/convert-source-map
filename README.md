@@ -115,13 +115,7 @@ Returns `src` with all source map comments pointing to map files removed.
 
 ### commentRegex
 
-Provides __a fresh__ RegExp each time it is accessed. Can be used to find source map comments. Deprecated, left for compatibility. Does not comply with RFC 2397.
-
-### commentRegex2
-
 Provides __a fresh__ RegExp each time it is accessed. Can be used to find source map comments.
-
-### commentRegex3
 
 Breaks down a source map comment into groups: Groups: 1: media type, 2: MIME type, 3: charset, 4: encoding, 5: data.
 
