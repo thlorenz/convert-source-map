@@ -12,14 +12,12 @@ function commentURI(prefix, suffix, rx) {
   return rx.exec(prefix + 'sourceMappingURL=data:application/json,%7B%22version%22%3A3%2C%22file%22%3A%22%22%2C%22sources%22%3A%5B%22function%20foo()%20%7B%0A%20console.log(%22hello%20I%20am%20foo%22)%3B%0A%20console.log(%22who%20are%20you%22)%3B%0A%7D%0A%0Afoo()%3B%0A%22%5D%2C%22names%22%3A%5B%5D%2C%22mappings%22%3A%22AAAA%22%7D' + suffix)
 }
 
-function commentWithCharSet(prefix, suffix, sep, rx) {
-  sep = sep || ':';
-  return rx.exec(prefix + 'sourceMappingURL=data:application/json;charset' + sep +'utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiIiwic291cmNlcyI6WyJmdW5jdGlvbiBmb28oKSB7XG4gY29uc29sZS5sb2coXCJoZWxsbyBJIGFtIGZvb1wiKTtcbiBjb25zb2xlLmxvZyhcIndobyBhcmUgeW91XCIpO1xufVxuXG5mb28oKTtcbiJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSJ9' + suffix)
+function commentWithCharSet(prefix, suffix, rx) {
+  return rx.exec(prefix + 'sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiIiwic291cmNlcyI6WyJmdW5jdGlvbiBmb28oKSB7XG4gY29uc29sZS5sb2coXCJoZWxsbyBJIGFtIGZvb1wiKTtcbiBjb25zb2xlLmxvZyhcIndobyBhcmUgeW91XCIpO1xufVxuXG5mb28oKTtcbiJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSJ9' + suffix)
 }
 
-function commentURIWithCharSet(prefix, suffix, sep, rx) {
-  sep = sep || ':';
-  return rx.exec(prefix + 'sourceMappingURL=data:application/json;charset' + sep +'utf-8,%7B%22version%22%3A3%2C%22file%22%3A%22%22%2C%22sources%22%3A%5B%22function%20foo()%20%7B%0A%20console.log(%22hello%20I%20am%20foo%22)%3B%0A%20console.log(%22who%20are%20you%22)%3B%0A%7D%0A%0Afoo()%3B%0A%22%5D%2C%22names%22%3A%5B%5D%2C%22mappings%22%3A%22AAAA%22%7D' + suffix)
+function commentURIWithCharSet(prefix, suffix, rx) {
+  return rx.exec(prefix + 'sourceMappingURL=data:application/json;charset=utf-8,%7B%22version%22%3A3%2C%22file%22%3A%22%22%2C%22sources%22%3A%5B%22function%20foo()%20%7B%0A%20console.log(%22hello%20I%20am%20foo%22)%3B%0A%20console.log(%22who%20are%20you%22)%3B%0A%7D%0A%0Afoo()%3B%0A%22%5D%2C%22names%22%3A%5B%5D%2C%22mappings%22%3A%22AAAA%22%7D' + suffix)
 }
 
 function commentWithoutMediaType(prefix, suffix, rx) {
@@ -43,14 +41,11 @@ test('comment regex old spec - @', function (t) {
     '/*@ ',   // multi line style with leading text
   ].forEach(function (x) { 
     t.ok(comment(x, '', convert.commentRegex), 'matches ' + x)
-    t.ok(comment(x, '', convert.commentRegex2), 'matches ' + x + ' (2)')
-    t.ok(commentURI(x, '', convert.commentRegex2), 'matches ' + x + ' uri')
-    t.ok(commentWithCharSet(x, '', undefined, convert.commentRegex), 'matches ' + x + ' with charset')
-    t.ok(commentWithCharSet(x, '', '=', convert.commentRegex), 'matches ' + x + ' with charset')
-    t.ok(commentWithCharSet(x, '', '=', convert.commentRegex2), 'matches ' + x + ' with charset (2)')
-    t.ok(commentURIWithCharSet(x, '', '=', convert.commentRegex2), 'matches ' + x + ' uri with charset')
-    t.ok(commentWithoutMediaType(x, '', convert.commentRegex2), 'matches ' + x + ' without media type (2)')
-    t.ok(commentURIWithoutMediaType(x, '', convert.commentRegex2), 'matches ' + x + ' uri without media type')
+    t.ok(commentURI(x, '', convert.commentRegex), 'matches ' + x + ' uri')
+    t.ok(commentWithCharSet(x, '', convert.commentRegex), 'matches ' + x + ' with charset')
+    t.ok(commentURIWithCharSet(x, '', convert.commentRegex), 'matches ' + x + ' uri with charset')
+    t.ok(commentWithoutMediaType(x, '', convert.commentRegex), 'matches ' + x + ' without media type')
+    t.ok(commentURIWithoutMediaType(x, '', convert.commentRegex), 'matches ' + x + ' uri without media type')
   });
 
   [
@@ -58,8 +53,7 @@ test('comment regex old spec - @', function (t) {
     ' @/* @',
   ].forEach(function (x) {
     t.ok(!comment(x, '', convert.commentRegex), 'should not match ' + x)
-    t.ok(!comment(x, '', convert.commentRegex2), 'should not match ' + x + ' (2)')
-    t.ok(!commentURI(x, '', convert.commentRegex2), 'should not match ' + x + ' uri')
+    t.ok(!commentURI(x, '', convert.commentRegex), 'should not match ' + x + ' uri')
   })
 
   t.end()
@@ -76,14 +70,11 @@ test('comment regex new spec - #', function (t) {
     '/*# ',   // multi line style with leading text
   ].forEach(function (x) { 
     t.ok(comment(x, '', convert.commentRegex), 'matches ' + x)
-    t.ok(comment(x, '', convert.commentRegex2), 'matches ' + x + ' (2)')
-    t.ok(commentURI(x, '', convert.commentRegex2), 'matches ' + x + ' uri')
-    t.ok(commentWithCharSet(x, '', undefined, convert.commentRegex), 'matches ' + x + ' with charset')
-    t.ok(commentWithCharSet(x, '', '=', convert.commentRegex), 'matches ' + x + ' with charset')
-    t.ok(commentWithCharSet(x, '', '=', convert.commentRegex2), 'matches ' + x + ' with charset (2)')
-    t.ok(commentURIWithCharSet(x, '', '=', convert.commentRegex2), 'matches ' + x + ' uri with charset')
-    t.ok(commentWithoutMediaType(x, '', convert.commentRegex2), 'matches ' + x + ' without media type (2)')
-    t.ok(commentURIWithoutMediaType(x, '', convert.commentRegex2), 'matches ' + x + ' uri without media type')
+    t.ok(commentURI(x, '', convert.commentRegex), 'matches ' + x + ' uri')
+    t.ok(commentWithCharSet(x, '', convert.commentRegex), 'matches ' + x + ' with charset')
+    t.ok(commentURIWithCharSet(x, '', convert.commentRegex), 'matches ' + x + ' uri with charset')
+    t.ok(commentWithoutMediaType(x, '', convert.commentRegex), 'matches ' + x + ' without media type')
+    t.ok(commentURIWithoutMediaType(x, '', convert.commentRegex), 'matches ' + x + ' uri without media type')
   });
   
   [ 
@@ -91,8 +82,7 @@ test('comment regex new spec - #', function (t) {
     ' #/* #',
   ].forEach(function (x) {
     t.ok(!comment(x, '', convert.commentRegex), 'should not match ' + x)
-    t.ok(!comment(x, '', convert.commentRegex2), 'should not match ' + x + ' (2)')
-    t.ok(!commentURI(x, '', convert.commentRegex2), 'should not match ' + x + ' uri')
+    t.ok(!commentURI(x, '', convert.commentRegex), 'should not match ' + x + ' uri')
   })
 
   t.end()
@@ -109,7 +99,7 @@ test('comment regex groups', function (t) {
     '/*# ',   // multi line style with leading text
   ].forEach(function (x) {
     var m;
-    m = comment(x, '', convert.commentRegex3)
+    m = comment(x, '', convert.commentRegex)
     t.ok(m, 'matches ' + x)
     t.ok(m[0], 'comment')
     t.equal(m[1], 'application/json', 'media type')
@@ -117,7 +107,7 @@ test('comment regex groups', function (t) {
     t.equal(m[3], undefined, 'undefined charset')
     t.equal(m[4], 'base64', 'base64 encoding')
     t.ok(m[5], 'data')
-    m = commentURI(x, '', convert.commentRegex3)
+    m = commentURI(x, '', convert.commentRegex)
     t.ok(m, 'matches ' + x + ' uri')
     t.ok(m[0], 'comment uri')
     t.equal(m[1], 'application/json', 'media type uri')
@@ -125,7 +115,7 @@ test('comment regex groups', function (t) {
     t.equal(m[3], undefined, 'undefined charset uri')
     t.equal(m[4], undefined, 'undefined encoding uri')
     t.ok(m[5], 'data uri')
-    m = commentWithCharSet(x, '', '=', convert.commentRegex3)
+    m = commentWithCharSet(x, '', convert.commentRegex)
     t.ok(m, 'matches ' + x + ' with charset')
     t.ok(m[0], 'comment with charset')
     t.equal(m[1], 'application/json;charset=utf-8', 'media type with charset')
@@ -133,7 +123,7 @@ test('comment regex groups', function (t) {
     t.equal(m[3], 'utf-8', 'charset with utf-8')
     t.equal(m[4], 'base64', 'base64 encoding with charset')
     t.ok(m[5], 'data with charset')
-    m = commentURIWithCharSet(x, '', '=', convert.commentRegex3)
+    m = commentURIWithCharSet(x, '', convert.commentRegex)
     t.ok(m, 'matches ' + x + ' uri with charset')
     t.ok(m[0], 'comment uri with charset')
     t.equal(m[1], 'application/json;charset=utf-8', 'media type uri with charset')
@@ -141,7 +131,7 @@ test('comment regex groups', function (t) {
     t.equal(m[3], 'utf-8', 'charset uri with utf-8')
     t.equal(m[4], undefined, 'undefined encoding uri with charset')
     t.ok(m[5], 'data with charset')
-    m = commentWithoutMediaType(x, '', convert.commentRegex3)
+    m = commentWithoutMediaType(x, '', convert.commentRegex)
     t.ok(m, 'matches ' + x + ' without media type')
     t.ok(m[0], 'comment without media type')
     t.equal(m[1], undefined, 'undefined media type')
@@ -149,7 +139,7 @@ test('comment regex groups', function (t) {
     t.equal(m[3], undefined, 'undefined charset without media type')
     t.equal(m[4], 'base64', 'base64 encoding without media type')
     t.ok(m[5], 'data without media type')
-    m = commentURIWithoutMediaType(x, '', convert.commentRegex3)
+    m = commentURIWithoutMediaType(x, '', convert.commentRegex)
     t.ok(m, 'matches ' + x + ' uri without media type')
     t.ok(m[0], 'comment uri without media type')
     t.equal(m[1], undefined, 'undefined media type')
@@ -164,8 +154,7 @@ test('comment regex groups', function (t) {
     ' #/* #',
   ].forEach(function (x) {
     t.ok(!comment(x, '', convert.commentRegex), 'should not match ' + x)
-    t.ok(!comment(x, '', convert.commentRegex2), 'should not match ' + x + ' (2)')
-    t.ok(!commentURI(x, '', convert.commentRegex2), 'should not match ' + x + ' uri')
+    t.ok(!commentURI(x, '', convert.commentRegex), 'should not match ' + x + ' uri')
   })
 
   t.end()

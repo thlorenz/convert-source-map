@@ -4,23 +4,11 @@ var path = require('path');
 
 Object.defineProperty(exports, 'commentRegex', {
   get: function getCommentRegex () {
-    // Deprecated, left for compatibility. Does not comply with RFC 2397.
-    return /^\s*?\/(?:\/|\*?)[@#]\s+?sourceMappingURL=data:(?:application|text)\/json;(?:charset[:=]\S+?;)?base64,(?:.*?)$/mg;
-  }
-});
-
-Object.defineProperty(exports, 'commentRegex2', {
-  get: function getCommentRegex2 () {
-    return /^\s*\/(?:\/|\*)[@#]\s+sourceMappingURL=data:(((?:application|text)\/json)(?:;charset=[^;,]+?)?)?(?:;base64)?,.*$/mg;
-  }
-});
-
-Object.defineProperty(exports, 'commentRegex3', {
-  get: function getCommentRegex3 () {
     // Groups: 1: media type, 2: MIME type, 3: charset, 4: encoding, 5: data.
-    return /^\s*\/(?:\/|\*)[@#]\s+sourceMappingURL=data:(((?:application|text)\/json)(?:;charset=([^;,]+)?)?)?(?:;(base64))?,(.*)$/;
+    return /^\s*?\/[\/\*][@#]\s+?sourceMappingURL=data:(((?:application|text)\/json)(?:;charset=([^;,]+?)?)?)?(?:;(base64))?,(.*?)$/mg;
   }
 });
+
 
 Object.defineProperty(exports, 'mapFileCommentRegex', {
   get: function getMapFileCommentRegex () {
@@ -178,7 +166,7 @@ exports.fromComment = function (comment) {
   comment = comment
     .replace(/^\/\*/g, '//')
     .replace(/\*\/$/g, '');
-  m = comment.match(exports.commentRegex3);
+  m = exports.commentRegex.exec(comment);
   encoding = m && m[4] || 'uri';
   return new Converter(comment, { encoding: encoding, hasComment: true });
 };
@@ -189,7 +177,7 @@ exports.fromMapFileComment = function (comment, dir) {
 
 // Finds last sourcemap comment in file or returns null if none was found
 exports.fromSource = function (content) {
-  var m = content.match(exports.commentRegex2);
+  var m = content.match(exports.commentRegex);
   return m ? exports.fromComment(m.pop()) : null;
 };
 
@@ -200,7 +188,7 @@ exports.fromMapFileSource = function (content, dir) {
 };
 
 exports.removeComments = function (src) {
-  return src.replace(exports.commentRegex2, '');
+  return src.replace(exports.commentRegex, '');
 };
 
 exports.removeMapFileComments = function (src) {
