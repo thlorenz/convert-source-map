@@ -29,12 +29,14 @@ if (typeof Buffer !== 'undefined') {
 function decodeBase64WithBufferFrom(base64) {
   return Buffer.from(base64, 'base64').toString();
 }
+
 function decodeBase64WithNewBuffer(base64) {
   if (typeof value === 'number') {
     throw new TypeError('The value to decode must not be of type number.');
   }
   return new Buffer(base64, 'base64').toString();
 }
+
 function decodeBase64WithAtob(base64) {
   return decodeURIComponent(escape(atob(base64)));
 }
@@ -88,6 +90,7 @@ function encodeBase64WithBufferFrom() {
   var json = this.toJSON();
   return Buffer.from(json, 'utf8').toString('base64');
 }
+
 function encodeBase64WithNewBuffer() {
   var json = this.toJSON();
   if (typeof json === 'number') {
@@ -95,6 +98,7 @@ function encodeBase64WithNewBuffer() {
   }
   return new Buffer(json, 'utf8').toString('base64');
 }
+
 function encodeBase64WithBtoa() {
   var json = this.toJSON();
   return btoa(unescape(encodeURIComponent(json)));
