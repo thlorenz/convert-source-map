@@ -30,7 +30,7 @@
   },
   "license": "MIT",
   "engine": {
-    "node": ">=0.6"
+    "node": ">=4"
   },
   "files": [
     "index.js"
