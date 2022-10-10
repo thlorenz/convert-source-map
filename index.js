@@ -74,19 +74,31 @@ Converter.prototype.toJSON = function (space) {
   return JSON.stringify(this.sourcemap, null, space);
 };
 
-Converter.prototype.toBase64 = typeof Buffer !== 'undefined' ? Buffer.from ?
-  function () {
-    var json = this.toJSON();
-    return Buffer.from(json, 'utf8').toString('base64');
-  } :
-  function () {
-    var json = this.toJSON();
-    return new Buffer(json, 'utf8').toString('base64');
-  } :
-  function () {
-    var json = this.toJSON();
-    return btoa(unescape(encodeURIComponent(json)));
-  };
+if (typeof Buffer !== 'undefined') {
+  if (typeof Buffer.from === 'function') {
+    Converter.prototype.toBase64 = encodeBase64WithBufferFrom;
+  } else {
+    Converter.prototype.toBase64 = encodeBase64WithNewBuffer;
+  }
+} else {
+  Converter.prototype.toBase64 = encodeBase64WithBtoa;
+}
+
+function encodeBase64WithBufferFrom() {
+  var json = this.toJSON();
+  return Buffer.from(json, 'utf8').toString('base64');
+}
+function encodeBase64WithNewBuffer() {
+  var json = this.toJSON();
+  if (typeof json === 'number') {
+    throw new TypeError('The json to encode must not be of type number.');
+  }
+  return new Buffer(json, 'utf8').toString('base64');
+}
+function encodeBase64WithBtoa() {
+  var json = this.toJSON();
+  return btoa(unescape(encodeURIComponent(json)));
+}
 
 Converter.prototype.toComment = function (options) {
   var base64 = this.toBase64();
