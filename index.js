@@ -91,7 +91,6 @@ Converter.prototype.toJSON = function (space) {
   return JSON.stringify(this.sourcemap, null, space);
 };
 
-
 if (typeof Buffer !== 'undefined') {
   if (typeof Buffer.from === 'function') {
     Converter.prototype.toBase64 = encodeBase64WithBufferFrom;
