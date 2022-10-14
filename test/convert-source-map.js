@@ -3,14 +3,15 @@
 
 var test = require('tap').test
   , generator = require('inline-source-map')
-  , convert = require('..')
-  , decodeBase64 = typeof Buffer.from ?
-    function decodeBase64(base64) {
-      return Buffer.from(base64, 'base64').toString();
-    } :
-    function decodeBase64(base64) {
-      return new Buffer(base64, 'base64').toString();
-    }
+  , convert = require('..');
+
+function decodeBase64WithBufferFrom(base64) {
+  return Buffer.from(base64, 'base64').toString();
+}
+
+function decodeBase64WithNewBuffer(base64) {
+  return new Buffer(base64, 'base64').toString();
+}
 
 var gen = generator({charset:"utf-8"})
     .addMappings('foo.js', [{ original: { line: 2, column: 3 } , generated: { line: 5, column: 10 } }], { line: 5 })
@@ -22,6 +23,7 @@ var gen = generator({charset:"utf-8"})
   , comment2 = '//# sourceMappingURL=data:application/json;charset=utf-8,' + uri
   , json = gen.toString()
   , obj = JSON.parse(json)
+  , decodeBase64 = typeof Buffer.from ? decodeBase64WithBufferFrom : decodeBase64WithNewBuffer;
 
 test('different formats', function (t) {
 
