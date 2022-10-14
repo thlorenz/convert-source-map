@@ -115,7 +115,7 @@ Converter.prototype.toURI = function () {
 
 Converter.prototype.toComment = function (options) {
   var encoding, content, data;
-  if (options && options.encoding === 'uri') {
+  if (options != null && options.encoding === 'uri') {
     encoding = '';
     content = this.toURI();
   } else {
@@ -123,7 +123,7 @@ Converter.prototype.toComment = function (options) {
     content = this.toBase64();
   }
   data = 'sourceMappingURL=data:application/json;charset=utf-8' + encoding + ',' + content;
-  return options && options.multiline ? '/*# ' + data + ' */' : '//# ' + data;
+  return options != null && options.multiline ? '/*# ' + data + ' */' : '//# ' + data;
 };
 
 // returns copy instead of original
