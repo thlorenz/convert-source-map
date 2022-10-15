@@ -45,25 +45,24 @@ function stripComment(sm) {
   return sm.split(',').pop();
 }
 
-function readFromFileMap(sm, dir, readMap) {
+function readFromFileMap(sm, read) {
   var r = exports.mapFileCommentRegex.exec(sm);
   // for some odd reason //# .. captures in 1 and /* .. */ in 2
   var filename = r[1] || r[2];
-  var filepath, sm;
-
-  if (dir.endsWith('/')) dir = dir.substring(0, dir.length - 1);
-  if (filename.startsWith('/')) filename = filename.substring(1);
-  filepath = dir + '/' + filename;
 
   try {
-    sm = readMap(filepath);
-    return typeof sm === 'string' ? sm : sm.then(undefined, throwError);
+    var sm = read(filename);
+    if (sm != null && typeof sm.catch === 'function') {
+      return sm.catch(throwError);
+    } else {
+      return sm;
+    }
   } catch (e) {
     throwError(e);
   }
 
   function throwError(e) {
-    throw new Error('An error occurred while trying to read the map file at ' + filepath + '\n' + e);
+    throw new Error('An error occurred while trying to read the map file at ' + filename + '\n' + e);
   }
 }
 
@@ -182,12 +181,16 @@ exports.fromComment = function (comment) {
   return new Converter(comment, { encoding: encoding, hasComment: true });
 };
 
-exports.fromMapFileComment = function (comment, dir, readMap) {
-  var sm = readFromFileMap(comment, dir, readMap);
-  return typeof sm === 'string' ? newConverter(sm) : sm.then(newConverter);
+function makeConverter(sm) {
+  return new Converter(sm, { isJSON: true });
+}
 
-  function newConverter(sm) {
-    return new Converter(sm, { isJSON: true });
+exports.fromMapFileComment = function (comment, read) {
+  var sm = readFromFileMap(comment, read);
+  if (sm != null && typeof sm.then === 'function') {
+    return sm.then(makeConverter);
+  } else {
+    return makeConverter(sm);
   }
 };
 
@@ -198,9 +201,9 @@ exports.fromSource = function (content) {
 };
 
 // Finds last sourcemap comment in file or returns null if none was found
-exports.fromMapFileSource = function (content, dir, readMap) {
+exports.fromMapFileSource = function (content, read) {
   var m = content.match(exports.mapFileCommentRegex);
-  return m ? exports.fromMapFileComment(m.pop(), dir, readMap) : null;
+  return m ? exports.fromMapFileComment(m.pop(), read) : null;
 };
 
 exports.removeComments = function (src) {
