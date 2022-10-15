@@ -4,9 +4,11 @@ var path = require('path');
 
 Object.defineProperty(exports, 'commentRegex', {
   get: function getCommentRegex () {
-    return /^\s*?\/(?:\/|\*?)[@#]\s+?sourceMappingURL=data:(?:application|text)\/json;(?:charset[:=]\S+?;)?base64,(?:.*?)$/mg;
+    // Groups: 1: media type, 2: MIME type, 3: charset, 4: encoding, 5: data.
+    return /^\s*?\/[\/\*][@#]\s+?sourceMappingURL=data:(((?:application|text)\/json)(?:;charset=([^;,]+?)?)?)?(?:;(base64))?,(.*?)$/mg;
   }
 });
+
 
 Object.defineProperty(exports, 'mapFileCommentRegex', {
   get: function getMapFileCommentRegex () {
@@ -64,10 +66,23 @@ function readFromFileMap(sm, dir) {
 function Converter (sm, opts) {
   opts = opts || {};
 
-  if (opts.isFileComment) sm = readFromFileMap(sm, opts.commentFileDir);
-  if (opts.hasComment) sm = stripComment(sm);
-  if (opts.isEncoded) sm = decodeBase64(sm);
-  if (opts.isJSON || opts.isEncoded) sm = JSON.parse(sm);
+  if (opts.isFileComment) {
+    sm = readFromFileMap(sm, opts.commentFileDir);
+  }
+
+  if (opts.hasComment) {
+    sm = stripComment(sm);
+  }
+
+  if (opts.encoding === 'base64') {
+    sm = decodeBase64(sm);
+  } else if (opts.encoding === 'uri') {
+    sm = decodeURIComponent(sm);
+  }
+
+  if (opts.isJSON || opts.encoding) {
+    sm = JSON.parse(sm);
+  }
 
   this.sourcemap = sm;
 }
@@ -104,10 +119,22 @@ function encodeBase64WithBtoa() {
   return btoa(unescape(encodeURIComponent(json)));
 }
 
+Converter.prototype.toURI = function () {
+  var json = this.toJSON();
+  return encodeURIComponent(json);
+};
+
 Converter.prototype.toComment = function (options) {
-  var base64 = this.toBase64();
-  var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
-  return options && options.multiline ? '/*# ' + data + ' */' : '//# ' + data;
+  var encoding, content, data;
+  if (options != null && options.encoding === 'uri') {
+    encoding = '';
+    content = this.toURI();
+  } else {
+    encoding = ';base64';
+    content = this.toBase64();
+  }
+  data = 'sourceMappingURL=data:application/json;charset=utf-8' + encoding + ',' + content;
+  return options != null && options.multiline ? '/*# ' + data + ' */' : '//# ' + data;
 };
 
 // returns copy instead of original
@@ -137,16 +164,22 @@ exports.fromJSON = function (json) {
   return new Converter(json, { isJSON: true });
 };
 
+exports.fromURI = function (uri) {
+  return new Converter(uri, { encoding: 'uri' });
+};
+
 exports.fromBase64 = function (base64) {
-  return new Converter(base64, { isEncoded: true });
+  return new Converter(base64, { encoding: 'base64' });
 };
 
 exports.fromComment = function (comment) {
+  var m, encoding;
   comment = comment
     .replace(/^\/\*/g, '//')
     .replace(/\*\/$/g, '');
-
-  return new Converter(comment, { isEncoded: true, hasComment: true });
+  m = exports.commentRegex.exec(comment);
+  encoding = m && m[4] || 'uri';
+  return new Converter(comment, { encoding: encoding, hasComment: true });
 };
 
 exports.fromMapFileComment = function (comment, dir) {
