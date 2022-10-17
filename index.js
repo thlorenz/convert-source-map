@@ -62,7 +62,7 @@ function readFromFileMap(sm, read) {
   }
 
   function throwError(e) {
-    throw new Error('An error occurred while trying to read the map file at ' + filename + '\n' + e);
+    throw new Error('An error occurred while trying to read the map file at ' + filename + '\n' + e.stack);
   }
 }
 
