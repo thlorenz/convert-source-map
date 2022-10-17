@@ -23,6 +23,23 @@ console.log(modified);
 {"version":3,"file":"build/foo.min.js","sources":["SRC/FOO.JS"],"names":[],"mappings":"AAAA","sourceRoot":"/"}
 ```
 
+## Upgrading
+
+Prior to v2.0.0, the `fromMapFileComment` and `fromMapFileSource` functions took a String directory path and used that to resolve & read the source map file from the filesystem. However, this made the library limited to nodejs environments and broke on sources with querystrings.
+
+In v2.0.0, you now need to pass a function that does the file reading. It will receive the source filename as a String that you can resolve to a filesystem path, URL, or anything else.
+
+If you are using `convert-source-map` in nodejs and want the previous behavior, you'll use a function like such:
+
+```diff
++ var fs = require('fs'); // Import the fs module to read a file
++ var path = require('path'); // Import the path module to resolve a path against your directory
+- var conv = convert.fromMapFileSource(css, '../my-dir');
++ var conv = convert.fromMapFileSource(css, function (filename) {
++   return fs.readFileSync(path.resolve('../my-dir', filename), 'utf-8');
++ });
+```
+
 ## API
 
 ### fromObject(obj)
@@ -45,24 +62,78 @@ Returns source map converter from given base64 encoded json string.
 
 Returns source map converter from given base64 or uri encoded json string prefixed with `//# sourceMappingURL=...`.
 
-### fromMapFileComment(comment, mapFileDir)
+### fromMapFileComment(comment, readMap)
 
 Returns source map converter from given `filename` by parsing `//# sourceMappingURL=filename`.
 
-`filename` must point to a file that is found inside the `mapFileDir`. Most tools store this file right next to the
-generated file, i.e. the one containing the source map.
+`readMap` must be a function which receives the source map filename and returns either a String or Buffer of the source map (if read synchronously), or a `Promise` containing a String or Buffer of the source map (if read asynchronously).
+
+If `readMap` doesn't return a `Promise`, `fromMapFileComment` will return a source map converter synchronously.
+
+If `readMap` returns a `Promise`, `fromMapFileComment` will also return `Promise`. The `Promise` will be either resolved with the source map converter or rejected with an error.
+
+#### Examples
+
+**Synchronous read in Node.js:**
+
+```js
+var convert = require('convert-source-map');
+var fs = require('fs');
+
+function readMap(filename) {
+  return fs.readFileSync(filename, 'utf8');
+}
+
+var json = convert
+  .fromMapFileComment('//# sourceMappingURL=map-file-comment.css.map', readMap)
+  .toJSON();
+console.log(json);
+```
+
+
+**Asynchronous read in Node.js:**
+
+```js
+var convert = require('convert-source-map');
+var { promises: fs } = require('fs'); // Notice the `promises` import
+
+function readMap(filename) {
+  return fs.readFile(filename, 'utf8');
+}
+
+var converter = await convert.fromMapFileComment('//# sourceMappingURL=map-file-comment.css.map', readMap)
+var json = converter.toJSON();
+console.log(json);
+```
+
+**Asynchronous read in the browser:**
+
+```js
+var convert = require('convert-source-map');
+
+async function readMap(url) {
+  const res = await fetch(url);
+  return res.text();
+}
+
+const converter = await convert.fromMapFileComment('//# sourceMappingURL=map-file-comment.css.map', readMap)
+var json = converter.toJSON();
+console.log(json);
+```
 
 ### fromSource(source)
 
 Finds last sourcemap comment in file and returns source map converter or returns `null` if no source map comment was found.
 
-### fromMapFileSource(source, mapFileDir)
+### fromMapFileSource(source, readMap)
 
-Finds last sourcemap comment in file and returns source map converter or returns `null` if no source map comment was
-found.
+Finds last sourcemap comment in file and returns source map converter or returns `null` if no source map comment was found.
 
-The sourcemap will be read from the map file found by parsing `# sourceMappingURL=file` comment. For more info see
-fromMapFileComment.
+`readMap` must be a function which receives the source map filename and returns either a String or Buffer of the source map (if read synchronously), or a `Promise` containing a String or Buffer of the source map (if read asynchronously).
+
+If `readMap` doesn't return a `Promise`, `fromMapFileSource` will return a source map converter synchronously.
+
+If `readMap` returns a `Promise`, `fromMapFileSource` will also return `Promise`. The `Promise` will be either resolved with the source map converter or rejected with an error.
 
 ### toObject()
 

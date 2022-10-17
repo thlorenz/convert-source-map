@@ -34,8 +34,5 @@
   },
   "files": [
     "index.js"
-  ],
-  "browser": {
-    "fs": false
-  }
+  ]
 }

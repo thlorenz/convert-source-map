@@ -1,6 +1,4 @@
 'use strict';
-var fs = require('fs');
-var path = require('path');
 
 Object.defineProperty(exports, 'commentRegex', {
   get: function getCommentRegex () {
@@ -47,28 +45,29 @@ function stripComment(sm) {
   return sm.split(',').pop();
 }
 
-function readFromFileMap(sm, dir) {
-  // NOTE: this will only work on the server since it attempts to read the map file
-
+function readFromFileMap(sm, read) {
   var r = exports.mapFileCommentRegex.exec(sm);
-
   // for some odd reason //# .. captures in 1 and /* .. */ in 2
   var filename = r[1] || r[2];
-  var filepath = path.resolve(dir, filename);
 
   try {
-    return fs.readFileSync(filepath, 'utf8');
+    var sm = read(filename);
+    if (sm != null && typeof sm.catch === 'function') {
+      return sm.catch(throwError);
+    } else {
+      return sm;
+    }
   } catch (e) {
-    throw new Error('An error occurred while trying to read the map file at ' + filepath + '\n' + e);
+    throwError(e);
+  }
+
+  function throwError(e) {
+    throw new Error('An error occurred while trying to read the map file at ' + filename + '\n' + e.stack);
   }
 }
 
 function Converter (sm, opts) {
   opts = opts || {};
-
-  if (opts.isFileComment) {
-    sm = readFromFileMap(sm, opts.commentFileDir);
-  }
 
   if (opts.hasComment) {
     sm = stripComment(sm);
@@ -182,8 +181,24 @@ exports.fromComment = function (comment) {
   return new Converter(comment, { encoding: encoding, hasComment: true });
 };
 
-exports.fromMapFileComment = function (comment, dir) {
-  return new Converter(comment, { commentFileDir: dir, isFileComment: true, isJSON: true });
+function makeConverter(sm) {
+  return new Converter(sm, { isJSON: true });
+}
+
+exports.fromMapFileComment = function (comment, read) {
+  if (typeof read === 'string') {
+    throw new Error(
+      'String directory paths are no longer supported with `fromMapFileComment`\n' +
+      'Please review the Upgrading documentation at https://github.com/thlorenz/convert-source-map#upgrading'
+    )
+  }
+
+  var sm = readFromFileMap(comment, read);
+  if (sm != null && typeof sm.then === 'function') {
+    return sm.then(makeConverter);
+  } else {
+    return makeConverter(sm);
+  }
 };
 
 // Finds last sourcemap comment in file or returns null if none was found
@@ -193,9 +208,15 @@ exports.fromSource = function (content) {
 };
 
 // Finds last sourcemap comment in file or returns null if none was found
-exports.fromMapFileSource = function (content, dir) {
+exports.fromMapFileSource = function (content, read) {
+  if (typeof read === 'string') {
+    throw new Error(
+      'String directory paths are no longer supported with `fromMapFileSource`\n' +
+      'Please review the Upgrading documentation at https://github.com/thlorenz/convert-source-map#upgrading'
+    )
+  }
   var m = content.match(exports.mapFileCommentRegex);
-  return m ? exports.fromMapFileComment(m.pop(), dir) : null;
+  return m ? exports.fromMapFileComment(m.pop(), read) : null;
 };
 
 exports.removeComments = function (src) {
