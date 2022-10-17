@@ -78,7 +78,7 @@ console.log(json);
 
 ```js
 var convert = require('convert-source-map');
-var fs = require('fs/promises'); // Notice the `fs/promises` import
+const { promises: fs } = require('fs'); // Notice the `promises` import
 
 function readMap(filename) {
   return fs.readFile(filename, 'utf8');
