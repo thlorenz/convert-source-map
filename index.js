@@ -186,6 +186,13 @@ function makeConverter(sm) {
 }
 
 exports.fromMapFileComment = function (comment, read) {
+  if (typeof read === 'string') {
+    throw new Error(
+      'String directory paths are no longer supported with `fromMapFileComment`\n' +
+      'Please review the Upgrading documentation at https://github.com/thlorenz/convert-source-map#upgrading'
+    )
+  }
+
   var sm = readFromFileMap(comment, read);
   if (sm != null && typeof sm.then === 'function') {
     return sm.then(makeConverter);
@@ -202,6 +209,12 @@ exports.fromSource = function (content) {
 
 // Finds last sourcemap comment in file or returns null if none was found
 exports.fromMapFileSource = function (content, read) {
+  if (typeof read === 'string') {
+    throw new Error(
+      'String directory paths are no longer supported with `fromMapFileSource`\n' +
+      'Please review the Upgrading documentation at https://github.com/thlorenz/convert-source-map#upgrading'
+    )
+  }
   var m = content.match(exports.mapFileCommentRegex);
   return m ? exports.fromMapFileComment(m.pop(), read) : null;
 };
