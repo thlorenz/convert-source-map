@@ -23,6 +23,23 @@ console.log(modified);
 {"version":3,"file":"build/foo.min.js","sources":["SRC/FOO.JS"],"names":[],"mappings":"AAAA","sourceRoot":"/"}
 ```
 
+## Upgrading
+
+Prior to v2.0.0, the `fromMapFileComment` and `fromMapFileSource` functions took a String directory path and used that to resolve & read the source map file from the filesystem. However, this made the library limited to nodejs environments and broke on sources with querystrings.
+
+In v2.0.0, you now need to pass a function that does the file reading. It will receive the source filename as a String that you can resolve to a filesystem path, URL, or anything else.
+
+If you are using `convert-source-map` in nodejs and want the previous behavior, you'll use a function like such:
+
+```diff
++ var fs = require('fs'); // Import the fs module to read a file
++ var path = require('path'); // Import the path module to resolve a path against your directory
+- var conv = convert.fromMapFileSource(css, '../my-dir');
++ var conv = convert.fromMapFileSource(css, function (filename) {
++   return fs.readFileSync(path.resolve('../my-dir', filename), 'utf-8');
++ });
+```
+
 ## API
 
 ### fromObject(obj)
