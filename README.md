@@ -203,4 +203,4 @@ By default, the comment is formatted like: `//# sourceMappingURL=...`, which you
 When `options.multiline == true`, the comment is formatted like: `/*# sourceMappingURL=... */`, which you would find in a CSS source file.
 
 [ci-url]: https://github.com/thlorenz/convert-source-map/actions?query=workflow:ci
-[ci-image]: https://img.shields.io/github/workflow/status/thlorenz/convert-source-map/CI?style=flat-square
+[ci-image]: https://img.shields.io/github/actions/workflow/status/thlorenz/convert-source-map/ci.yml?branch=master&style=flat-square
