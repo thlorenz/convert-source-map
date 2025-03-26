@@ -11,7 +11,7 @@ Object.defineProperty(exports, 'commentRegex', {
 Object.defineProperty(exports, 'mapFileCommentRegex', {
   get: function getMapFileCommentRegex () {
     // Matches sourceMappingURL in either // or /* comment styles.
-    return /(?:\/\/[@#][ \t]+?sourceMappingURL=([^\s'"`]+?)[ \t]*?$)|(?:\/\*[@#][ \t]+sourceMappingURL=([^*]+?)[ \t]*?(?:\*\/){1}[ \t]*?$)/mg;
+    return /(?:\/\/[@#]\s+sourceMappingURL=([^\s'"`]+)\s*$)|(?:\/\*[@#]\s+sourceMappingURL=([^\s*]+)\s*\*\/)[ \t]*$/mg;
   }
 });
 
@@ -47,7 +47,7 @@ function stripComment(sm) {
 
 function readFromFileMap(sm, read) {
   var r = exports.mapFileCommentRegex.exec(sm);
-  // for some odd reason //# .. captures in 1 and /* .. */ in 2
+  // "//# .." capture in group 1 and "/*# .. */" in group 2 due to alternate (|) operator in regular expression
   var filename = r[1] || r[2];
 
   try {
