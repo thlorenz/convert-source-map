@@ -3,7 +3,7 @@
 Object.defineProperty(exports, 'commentRegex', {
   get: function getCommentRegex () {
     // Groups: 1: media type, 2: MIME type, 3: charset, 4: encoding, 5: data.
-    return /^\s*?\/[\/\*][@#]\s+?sourceMappingURL=data:(((?:application|text)\/json)(?:;charset=([^;,]+?)?)?)?(?:;(base64))?,(.*?)$/mg;
+    return /^(?:[ \t\f\v]*?)\/[\/\*][@#]\s+sourceMappingURL=data:(((?:application|text)\/json)(?:;charset=([^;,]+?))?)?(?:;(base64))?,(.*?)$/mg;
   }
 });
 
