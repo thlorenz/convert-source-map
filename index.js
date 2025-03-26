@@ -31,7 +31,7 @@ function decodeBase64WithBufferFrom(base64) {
 }
 
 function decodeBase64WithNewBuffer(base64) {
-  if (typeof value === 'number') {
+  if (typeof base64 === 'number') {
     throw new TypeError('The value to decode must not be of type number.');
   }
   return new Buffer(base64, 'base64').toString();
