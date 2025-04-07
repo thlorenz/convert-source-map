@@ -42,7 +42,7 @@ function decodeBase64WithAtob(base64) {
 }
 
 function stripComment(sm) {
-  return sm.split(',').pop();
+  return sm.substring(sm.indexOf(',') + 1);
 }
 
 function readFromFileMap(sm, read) {

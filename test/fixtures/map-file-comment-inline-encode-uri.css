@@ -1,0 +1,14 @@
+.header {
+  background: #444;
+  border: solid;
+  padding: 10px;
+  border-radius: 10px 5px 10px 5px;
+  color: #b4b472; }
+
+#main li {
+  color: green;
+  margin: 10px;
+  padding: 10px;
+  font-size: 18px; }
+
+/*# sourceMappingURL=data:application/json,%7B%0A%22version%22:%20%223%22,%0A%22mappings%22:%20%22AAAA,wBAAyB;EACvB,UAAU,EAAE,IAAI;EAChB,MAAM,EAAE,KAAK;EACb,OAAO,EAAE,IAAI;EACb,aAAa,EAAE,iBAAiB;EAChC,KAAK,EAAE,OAAkB;;AAG3B,wBAAyB;EACvB,OAAO,EAAE,IAAI;;ACTf,gBAAiB;EACf,UAAU,EAAE,IAAI;EAChB,KAAK,EAAE,MAAM;;AAGf,kBAAmB;EACjB,MAAM,EAAE,IAAI;EACZ,OAAO,EAAE,IAAI;EACb,UAAU,EAAE,KAAK;EACjB,aAAa,EAAE,GAAG;EAClB,KAAK,EAAE,KAAK;;AAEd,kBAAmB;EACjB,KAAK,EAAE,KAAK;;AAGd,mBAAoB;EAClB,KAAK,EAAE,KAAK;EACZ,MAAM,EAAE,IAAI;EACZ,OAAO,EAAE,IAAI;EACb,SAAS,EAAE,IAAI%22,%0A%22sources%22:%20%5B%22./client/sass/core.scss%22,%22./client/sass/main.scss%22%5D,%0A%22file%22:%20%22map-file-comment.css%22%0A%7D */
