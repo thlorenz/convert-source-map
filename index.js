@@ -2,8 +2,9 @@
 
 Object.defineProperty(exports, 'commentRegex', {
   get: function getCommentRegex () {
+    // A block comment may follow code if it closes at the end of the line.
     // Groups: 1: media type, 2: MIME type, 3: charset, 4: encoding, 5: data.
-    return /^\s*?\/[\/\*][@#]\s+?sourceMappingURL=data:(((?:application|text)\/json)(?:;charset=([^;,]+?)?)?)?(?:;(base64))?,(.*?)$/mg;
+    return /(?:^\s*?\/[\/\*]|\/\*(?=(?:(?!\/\*|\*\/).)*\*\/[ \t]*$))[@#]\s+?sourceMappingURL=data:(((?:application|text)\/json)(?:;charset=([^;,]+?)?)?)?(?:;(base64))?,(.*?)$/mg;
   }
 });
 
@@ -175,7 +176,7 @@ exports.fromComment = function (comment) {
   var m, encoding;
   comment = comment
     .replace(/^\/\*/g, '//')
-    .replace(/\*\/$/g, '');
+    .replace(/\*\/[ \t]*$/g, '');
   m = exports.commentRegex.exec(comment);
   encoding = m && m[4] || 'uri';
   return new Converter(comment, { encoding: encoding, hasComment: true });

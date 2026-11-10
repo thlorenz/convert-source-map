@@ -283,3 +283,21 @@ test('mapFileCommentRegex returns new RegExp on each get', function(t) {
 
   t.end()
 })
+
+test('reads and removes a source map block comment after CSS on the same line', function (t) {
+  var map = { version: 3, sources: ['input.scss'], names: [], mappings: '' }
+  var css = '.example{color:red}'
+  var converter = convert.fromObject(map)
+
+  ;[{}, { encoding: 'uri' }].forEach(function (options) {
+    options.multiline = true
+    var comment = converter.toComment(options)
+    var source = css + comment + ' \t\r\n'
+    var result = convert.fromSource(source)
+
+    t.deepEqual(result && result.toObject(), map, 'reads the inline map')
+    t.equal(convert.removeComments(source), css + '\r\n', 'leaves the CSS intact')
+    t.equal(convert.fromSource('var value = "' + comment + '"'), null, 'ignores a quoted block comment')
+  })
+  t.end()
+})
